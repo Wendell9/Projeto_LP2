@@ -1,0 +1,13 @@
+Tue May 06 20:28:45 BRT 2025 : Apache Derby Servidor de Rede - 10.15.2.0 - (1873585) iniciado e pronto para aceitar conexões na porta 1527 em {3}
+----------------------------------------------------------------
+Tue May 06 20:28:46 BRT 2025:
+ Inicializando o Derby versão The Apache Software Foundation - Apache Derby - 10.15.2.0 - (1873585): instância a816c00e-0196-a7ee-2adc-ffff90830289
+no diretório de banco de dados D:\FESA\6° Semestre\LP2\Databases\biblioteca 
+
+java.vendor=Oracle Corporation
+user.dir=D:\Program Files (x86)\db-derby-10.15.2.0-bin
+os.name=Windows 11
+os.arch=amd64
+os.version=10.0
+derby.system.home=D:\FESA\6° Semestre\LP2\Databases
+Carregador de classe do banco de dados iniciado - derby.database.classpath=''
