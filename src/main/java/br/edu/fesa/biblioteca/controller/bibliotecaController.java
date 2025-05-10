@@ -14,9 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 @RequestMapping("/biblioteca-fesa")
-public class bibliotecaController {
+public class BibliotecaController {
     @GetMapping({"", "/", "/home", "/inicio"})
     public String principal() {
-        return "/index";
+        return "index";
+    }
+    
+    // Novo método para redirecionar para a controller de usuário
+    @GetMapping("/cadastro")
+    public String redirecionarParaUsuarios() {
+        return "redirect:/Usuario/cadastro";  // Assumindo que a rota da controller de usuário é "/usuario"
     }
 }
