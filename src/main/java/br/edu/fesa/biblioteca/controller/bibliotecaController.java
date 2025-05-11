@@ -8,13 +8,11 @@ import br.edu.fesa.biblioteca.cadastro.model.Usuario;
 import br.edu.fesa.biblioteca.service.CookieService;
 import br.edu.fesa.biblioteca.service.UsuarioService;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -64,7 +62,8 @@ public class BibliotecaController {
     @GetMapping("/sair")
     public String sair(HttpServletResponse response) throws UnsupportedEncodingException {
 
-        CookieService.setCookie(response, "ususarioId", "", 0);
-        return "index";
+        CookieService.setCookie(response, "usuarioId", "", 0);
+        CookieService.setCookie(response, "usuarioEmail", "", 0);
+        return "redirect:/biblioteca-fesa";
     }
 }

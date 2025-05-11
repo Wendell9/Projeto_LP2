@@ -1,7 +1,5 @@
 package br.edu.fesa.biblioteca.controller;
-
 import br.edu.fesa.biblioteca.cadastro.model.Usuario;
-import br.edu.fesa.biblioteca.repository.UsuarioRepository;
 import br.edu.fesa.biblioteca.service.UsuarioService;
 import java.util.List;
 import java.util.UUID;
@@ -19,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.validation.Valid;
 import java.io.IOException;
+import java.util.Optional;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -83,8 +82,9 @@ public class UsuarioController {
 
     @GetMapping("/editar/{id}")
     public String editar(@PathVariable UUID id, ModelMap model) {
-
-        model.addAttribute("usuario", usuarioService.findById(id));
+        Usuario user= usuarioService.findById(id).get();
+        user.setImagemEmbase64();
+        model.addAttribute("usuario", user);
         return "editarUsuario";
     }
 

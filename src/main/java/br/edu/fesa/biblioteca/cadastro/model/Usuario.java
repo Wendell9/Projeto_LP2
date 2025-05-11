@@ -8,8 +8,6 @@ package br.edu.fesa.biblioteca.cadastro.model;
  *
  * @author guind
  */
-
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import java.io.Serializable;
+import java.util.Base64;
 import java.util.UUID;
 
 @Entity
@@ -28,26 +27,28 @@ public class Usuario implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
-    
+
     @Column(nullable = false, length = 100)
     private String nome;
-    
+
     @Column(nullable = false, unique = true, length = 100)
     private String email;
-    
+
     @Column(nullable = false)
     private String senha;
-    
+
     @Column(length = 20)
     private String telefone;
-    
-     @Column(length = 50)
+
+    @Column(length = 50)
     private String tipo;
 
     @Column(length = 20)
     private String status;
 
- @Lob
+    private String ImagemEmbase64;
+
+    @Lob
     @Column(name = "IMAGEM", columnDefinition = "VARBINARY(MAX)") // Para SQL Server
     // Ou alternativamente para outros bancos:
     // @Column(columnDefinition = "LONGBLOB") // MySQL
@@ -63,8 +64,9 @@ public class Usuario implements Serializable {
     }
 
     // Getters e Setters
-    public Usuario(){}
-    
+    public Usuario() {
+    }
+
     public Usuario(String nome, String email, String senha, String telefone) {
         this.nome = nome;
         this.email = email;
@@ -88,12 +90,12 @@ public class Usuario implements Serializable {
         this.status = status;
     }
 
-    public UUID getId(){
+    public UUID getId() {
         return id;
     }
-    
+
     public void setId() {
-         this.id = UUID.randomUUID();  // Gera um UUID
+        this.id = UUID.randomUUID();  // Gera um UUID
     }
 
     public String getNome() {
@@ -127,6 +129,12 @@ public class Usuario implements Serializable {
     public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
-    
-}
 
+    public String getImagemEmbase64() {
+        return ImagemEmbase64;
+    }
+
+    public void setImagemEmbase64() {
+        this.ImagemEmbase64 = Base64.getEncoder().encodeToString(imagem);
+    }
+}
