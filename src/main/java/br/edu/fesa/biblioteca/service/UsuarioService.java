@@ -26,7 +26,7 @@ public class UsuarioService implements UserDetailsService {
         usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
         return usuarioRepository.save(usuario);
     }
-    
+
     public boolean emailExiste(String email) {
         return usuarioRepository.existsByEmail(email);
     }
@@ -34,32 +34,42 @@ public class UsuarioService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("Email não encontrado"));;
-        
+
         return User.builder()
                 .username(usuario.getEmail())
                 .password(usuario.getSenha())
                 .roles("USER") // Você pode definir roles específicas aqui
                 .build();
     }
-    
+
     public boolean autenticarUsuario(String email, String senha) {
         UserDetails userDetails = loadUserByUsername(email);
         return passwordEncoder.matches(senha, userDetails.getPassword());
     }
-    
+
     public List<Usuario> findAll() {
         return usuarioRepository.findAll();
     }
-            public Optional<Usuario> findById(UUID id) {
+
+    public Optional<Usuario> findById(UUID id) {
         Optional<Usuario> user = usuarioRepository.findById(id);
-        user.ifPresent(p->p.setSenha(""));
+        user.ifPresent(p -> p.setSenha(""));
         return usuarioRepository.findById(id);
     }
+
     public Usuario update(Usuario usuario) {
-    return usuarioRepository.save(usuario);
+        return usuarioRepository.save(usuario);
     }
-    
-        public void deleteById(UUID id) {
+
+    public void deleteById(UUID id) {
         usuarioRepository.deleteById(id);
     }
+
+    public Usuario login(String email, String senha) {
+        if (autenticarUsuario(email, senha)) {
+            return usuarioRepository.login(email);
+        }
+        return null;
+    }
+
 }

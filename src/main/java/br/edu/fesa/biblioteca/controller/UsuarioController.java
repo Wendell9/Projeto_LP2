@@ -33,18 +33,18 @@ public class UsuarioController {
     @GetMapping("/cadastro")
     public String mostrarFormularioCadastro(@RequestParam(name = "sucesso", required = false) String sucesso, Model model) {
 
-            if (sucesso != null) {
-                model.addAttribute("sucesso", true);
-            } else {
-                model.addAttribute("sucesso", false);
-            }
+        if (sucesso != null) {
+            model.addAttribute("sucesso", true);
+        } else {
+            model.addAttribute("sucesso", false);
+        }
 
-            model.addAttribute("usuario", new Usuario());
-            return "cadastro";
+        model.addAttribute("usuario", new Usuario());
+        return "cadastro";
     }
 
-    @PostMapping("/salvar")
-    public String cadastrarUsuario(@ModelAttribute Usuario usuario, Model model,@RequestParam("arquivoImagem") MultipartFile arquivoImagem,
+    @PostMapping("/cadastro")
+    public String cadastrarUsuario(@ModelAttribute Usuario usuario, Model model, @RequestParam("arquivoImagem") MultipartFile arquivoImagem,
             RedirectAttributes redirectAttributes) {
         // Verifica se o e-mail já existe
         // Passa o valor de sucesso para o modelo (se existir)
@@ -53,17 +53,17 @@ public class UsuarioController {
             if (!arquivoImagem.isEmpty()) {
                 usuario.setImagem(arquivoImagem.getBytes());
             }
-        if (usuarioService.emailExiste(usuario.getEmail())) {
-            model.addAttribute("erro", "E-mail já está cadastrado.");
-            model.addAttribute("usuario", usuario); // Preenche o formulário com os dados
-            return "cadastro"; // Volta para a página de cadastro com os dados já preenchidos
-        }
+            if (usuarioService.emailExiste(usuario.getEmail())) {
+                model.addAttribute("erro", "E-mail já está cadastrado.");
+                model.addAttribute("usuario", usuario); // Preenche o formulário com os dados
+                return "cadastro"; // Volta para a página de cadastro com os dados já preenchidos
+            }
 
-        // Salva o usuário se o e-mail não existir
-        usuarioService.save(usuario);
+            // Salva o usuário se o e-mail não existir
+            usuarioService.save(usuario);
 
-        return "redirect:/Usuario/cadastro?sucesso"; // Redireciona após sucesso
-         } catch (IOException e) {
+            return "redirect:/Usuario/cadastro?sucesso"; // Redireciona após sucesso
+        } catch (IOException e) {
             model.addAttribute("erro", "Falha ao processar imagem: " + e.getMessage());
             model.addAttribute("usuario", usuario); // Preenche o formulário com os dados
             return "cadastro"; // Volta para a página de cadastro com os dados já preenchidos

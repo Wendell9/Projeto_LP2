@@ -33,33 +33,12 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class).build();
     }
-
-
-    
-    @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        // Configurando os detalhes do usuário com senhas codificadas
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-        manager.createUser(User.withUsername("user")
-                .password(passwordEncoder.encode("password")) // Senha codificada
-                .roles("USER")
-                .build());
-        return manager;
-    }
  
         @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/", "/biblioteca-fesa", "/biblioteca-fesa/", "/biblioteca-fesa/**").permitAll()
-            .requestMatchers( "/Usuario/cadastro","/Usuario/salvar", "/h2-console/**").permitAll()
-            .requestMatchers("/home", "/Usuario/**").authenticated()
-        )
             .csrf(AbstractHttpConfigurer::disable)
-.headers(httpSecurityHeadersConfigurer -> {
-    httpSecurityHeadersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable);
- });
-        
-
+        .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+        .formLogin(AbstractHttpConfigurer::disable); // <--- Remove o login padrão do Spring
         return http.build();
 }}
