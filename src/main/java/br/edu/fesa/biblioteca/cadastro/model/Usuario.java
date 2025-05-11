@@ -15,6 +15,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.util.UUID;
@@ -24,7 +25,8 @@ import java.util.UUID;
 public class Usuario implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
     
     @Column(nullable = false, length = 100)
@@ -38,6 +40,27 @@ public class Usuario implements Serializable {
     
     @Column(length = 20)
     private String telefone;
+    
+     @Column(length = 50)
+    private String tipo;
+
+    @Column(length = 20)
+    private String status;
+
+ @Lob
+    @Column(name = "IMAGEM", columnDefinition = "VARBINARY(MAX)") // Para SQL Server
+    // Ou alternativamente para outros bancos:
+    // @Column(columnDefinition = "LONGBLOB") // MySQL
+    // @Column(columnDefinition = "BYTEA") // PostgreSQL
+    private byte[] imagem;
+
+    public byte[] getImagem() {
+        return imagem;
+    }
+
+    public void setImagem(byte[] imagem) {
+        this.imagem = imagem;
+    }
 
     // Getters e Setters
     public Usuario(){}
@@ -47,6 +70,22 @@ public class Usuario implements Serializable {
         this.email = email;
         this.senha = senha;
         this.telefone = telefone;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public UUID getId(){
