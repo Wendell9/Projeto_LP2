@@ -44,7 +44,9 @@
                         <li><a class="dropdown-item" href="#">Empréstimos</a></li>
                         <li><a class="dropdown-item" href="#">Configurações</a></li>
                         <li><a class="dropdown-item" href="#">Notificações</a></li>
-                        <li><a class="dropdown-item" href="/Usuario/lista">Lista de Usuários</a></li>
+                        <li th:if="${isAdmin}">
+                            <a class="dropdown-item" href="/Usuario/listarUsuario">Listar Usuários</a>
+                        </li>
                         <li><a class="dropdown-item" href="/biblioteca-fesa/sair">Sair</a></li>
                     </ul>
                 </li>
@@ -57,7 +59,16 @@
                   th:object="${usuario}" 
                   method="post">
                 <div class="d-flex justify-content-center mb-3"> <!-- Container centralizado -->
-                    <img th:src="'data:image/jpeg;base64,' + ${usuario.ImagemEmbase64}" 
+                    <!-- Se o usuário tem imagem -->
+                    <img th:if="${usuario.imagemEmbase64 != null}" 
+                         th:src="'data:' + ${usuario.tipo_imagem} + ';base64,' + ${usuario.imagemEmbase64}" 
+                         alt="Foto do usuário" 
+                         class="rounded-circle"
+                         style="width: 300px; height: 300px; object-fit: cover;"> 
+
+                    <!-- Se o usuário NÃO tem imagem -->
+                    <img th:if="${usuario.imagemEmbase64 == null}" 
+                         src="/images/foto_padrao.jpg" 
                          alt="Foto do usuário" 
                          class="rounded-circle"
                          style="width: 300px; height: 300px; object-fit: cover;"> <!-- Tamanho fixo e ajuste de imagem -->
@@ -82,8 +93,8 @@
                     <label for="nome">Senha</label>
                     <input type="password" class="form-control" id="nome" th:field="*{senha}" placeholder="Senha" maxlength="100" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Salvar</button>
-                <a href="#" th:href="@{/Usuario/lista}" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary mt-3">Salvar</button>
+                <a th:href="@{${origem}}" class="btn btn-secondary mt-3">Cancelar</a>
             </form>
         </div>
     </body>

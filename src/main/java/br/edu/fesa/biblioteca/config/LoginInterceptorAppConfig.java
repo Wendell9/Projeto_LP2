@@ -24,7 +24,7 @@ public class LoginInterceptorAppConfig implements WebMvcConfigurer {
         registry.addInterceptor(logininterceptor).excludePathPatterns(
                 "/biblioteca-fesa/login",
                 "/biblioteca-fesa/inicio",
-                "/biblioteca-fesa/", "/error", "/Usuario/cadastro","/biblioteca-fesa");
+                "/biblioteca-fesa/", "/error", "/Usuario/cadastro","/biblioteca-fesa","/biblioteca-fesa/sair");
     }
 
 }

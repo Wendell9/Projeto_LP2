@@ -20,7 +20,7 @@
       </li>
     </ul>
 
-    <form class="d-flex ms-auto" th:object="${usuario}" method="POST" th:action="@{biblioteca-fesa/login}">
+    <form class="d-flex ms-auto" th:object="${usuario}" method="POST" th:action="@{/biblioteca-fesa/login}">
       <input class="form-control me-2" th:field="*{email}" type="text" name="username" placeholder="Usuário" required>
       <input class="form-control me-2" th:field="*{senha}" type="password" name="password" placeholder="Senha" required>
       <button class="btn btn-outline-light" type="submit">Entrar</button>

@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  *
@@ -40,30 +41,38 @@ public class BibliotecaController {
     }
 
     @PostMapping("/login")
-    public String logar(Usuario usuario, Model model, HttpServletResponse response) throws UnsupportedEncodingException {
+    public String logar(Usuario usuario, RedirectAttributes redirectAttributes, HttpServletResponse response) throws UnsupportedEncodingException {
+        String ADMIN;
         if (!usuarioService.emailExiste(usuario.getEmail())) {
-            model.addAttribute("erro", "E-mail não existe");
-            model.addAttribute("usuario", usuario); // Preenche o formulário com os dados
+            redirectAttributes.addAttribute("erro", "E-mail não existe");
+            redirectAttributes.addAttribute("usuario", usuario); // Preenche o formulário com os dados
             return "redirect:/biblioteca-fesa"; // Volta para a página de cadastro com os dados já preenchidos
         }
 
         Usuario usuarioLogado = usuarioService.login(usuario.getEmail(), usuario.getSenha());
         // Busca o usuário no banco
         if (usuarioLogado != null) {
+            ADMIN = (usuarioLogado.isAdmin()) ? "true" : "false";
             CookieService.setCookie(response, "usuarioId", String.valueOf(usuarioLogado.getId()), 10000);
             CookieService.setCookie(response, "usuarioEmail", String.valueOf(usuarioLogado.getEmail()), 10000);
+            CookieService.setCookie(response, "ADMIN", ADMIN, 10000);
+            redirectAttributes.addAttribute("isAdmin", usuarioLogado.isAdmin()); // Define a variável no 
             return "redirect:/home";
         }
-        model.addAttribute("erro", "E-mail ou senha inválidas");
+        redirectAttributes.addAttribute("erro", "E-mail ou senha inválidas");
 
         return "redirect:/biblioteca-fesa";
     }
 
     @GetMapping("/sair")
     public String sair(HttpServletResponse response) throws UnsupportedEncodingException {
+        limpaCookies(response);
+        return  "redirect:/biblioteca-fesa";
+    }
 
+    void limpaCookies(HttpServletResponse response) throws UnsupportedEncodingException {
         CookieService.setCookie(response, "usuarioId", "", 0);
         CookieService.setCookie(response, "usuarioEmail", "", 0);
-        return "redirect:/biblioteca-fesa";
+        CookieService.setCookie(response, "ADMIN", "", 0);
     }
 }

@@ -17,14 +17,28 @@ import org.springframework.web.servlet.HandlerInterceptor;
  * @author guind
  */
 @Component
-public class LoginInterceptor implements HandlerInterceptor{
-    
+public class LoginInterceptor implements HandlerInterceptor {
+
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws UnsupportedEncodingException, IOException{
-        if(CookieService.getCookie(request, "usuarioId")!=null)
-        {
-        return true;
-        }
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws UnsupportedEncodingException, IOException {
+        System.out.println(CookieService.getCookie(request, "usuarioId"));
+        System.out.println(CookieService.getCookie(request, "ADMIN"));
+        if (CookieService.getCookie(request, "usuarioId") != null) {
+            if ("true".equals(CookieService.getCookie(request, "ADMIN"))) {
+                return true;
+            } else if ("false".equals(CookieService.getCookie(request, "ADMIN"))) {
+                String uri = request.getRequestURI();
+                if (uri.contains("Usuario/lista")) {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN); // Define status 403 sem redirecionamento
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }     
+
         response.sendRedirect("biblioteca-fesa");
         return false;
     }

@@ -22,6 +22,8 @@ public class CookieService {
 
     public static void setCookie(HttpServletResponse response, String key, String valor, int segundos) throws UnsupportedEncodingException {
         Cookie cookie = new Cookie(key, URLEncoder.encode(valor, "UTF-8"));
+        cookie.setHttpOnly(true); // Evita acesso por JS
+        cookie.setSecure(true); // Apenas via HTTPS
         cookie.setPath("/"); 
         cookie.setMaxAge(segundos);
         response.addCookie(cookie);

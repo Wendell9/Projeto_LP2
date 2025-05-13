@@ -32,7 +32,9 @@
                         <li><a class="dropdown-item" href="#">Empréstimos</a></li>
                         <li><a class="dropdown-item" href="#">Configurações</a></li>
                         <li><a class="dropdown-item" href="#">Notificações</a></li>
-                        <li><a class="dropdown-item" href="/Usuario/lista">Lista de Usuários</a></li>
+                        <li th:if="${isAdmin}">
+                            <a class="dropdown-item" href="/Usuario/listarUsuario">Listar Usuários</a>
+                        </li>
                         <li><a class="dropdown-item" href="/biblioteca-fesa/sair">Sair</a></li>
                     </ul>
                 </li>

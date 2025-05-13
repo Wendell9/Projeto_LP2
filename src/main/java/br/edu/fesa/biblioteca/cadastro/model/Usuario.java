@@ -40,11 +40,14 @@ public class Usuario implements Serializable {
     @Column(length = 20)
     private String telefone;
 
-    @Column(length = 50)
-    private String tipo;
-
     @Column(length = 20)
     private String status;
+
+    @Column(length = 20)
+    private String tipo_imagem;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean admin; // Valor padrão false
 
     private String ImagemEmbase64;
 
@@ -54,6 +57,14 @@ public class Usuario implements Serializable {
     // @Column(columnDefinition = "LONGBLOB") // MySQL
     // @Column(columnDefinition = "BYTEA") // PostgreSQL
     private byte[] imagem;
+
+    public String getTipo_imagem() {
+        return tipo_imagem;
+    }
+
+    public void setTipo_imagem(String tipo_imagem) {
+        this.tipo_imagem = tipo_imagem;
+    }
 
     public byte[] getImagem() {
         return imagem;
@@ -72,14 +83,6 @@ public class Usuario implements Serializable {
         this.email = email;
         this.senha = senha;
         this.telefone = telefone;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
     }
 
     public String getStatus() {
@@ -135,6 +138,21 @@ public class Usuario implements Serializable {
     }
 
     public void setImagemEmbase64() {
-        this.ImagemEmbase64 = Base64.getEncoder().encodeToString(imagem);
+        if (imagem != null) {
+            this.ImagemEmbase64 = Base64.getEncoder().encodeToString(imagem);
+        } else {
+            this.ImagemEmbase64 = null;
+        }
     }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
+    
+    
 }
+
