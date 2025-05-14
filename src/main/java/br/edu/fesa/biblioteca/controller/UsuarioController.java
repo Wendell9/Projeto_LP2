@@ -123,9 +123,14 @@ public class UsuarioController {
 
     @PostMapping("/atualizar/{id}")
     public String atualizar(@PathVariable UUID id, @Valid
-            @ModelAttribute Usuario usuario, BindingResult bindingResult, ModelMap model, HttpServletRequest request) throws UnsupportedEncodingException {
+            @ModelAttribute Usuario usuario, BindingResult bindingResult, ModelMap model, HttpServletRequest request, @RequestParam("arquivoImagem") MultipartFile arquivoImagem) throws UnsupportedEncodingException, IOException {
         String adminCookie = CookieService.getCookie(request, "ADMIN");
         model.addAttribute("isAdmin", "true".equals(adminCookie)); // Define a variável
+        if (!arquivoImagem.isEmpty()) {
+            String nomeArquivo = arquivoImagem.getOriginalFilename();
+            usuario.setImagem(arquivoImagem.getBytes());
+            usuario.setTipo_imagem(nomeArquivo.substring(nomeArquivo.lastIndexOf('.') + 1));
+        }
         if (bindingResult.hasErrors()) {
             model.addAttribute("usuario", usuario);
             return "/usuario/editar";
@@ -135,6 +140,8 @@ public class UsuarioController {
         user.setNome(usuario.getNome());
         user.setSenha(usuario.getSenha());
         user.setTelefone(usuario.getTelefone());
+        user.setImagem(usuario.getImagem());
+        user.setTipo_imagem(usuario.getTipo_imagem());
         usuarioService.update(user);
         return "redirect:/Usuario/lista";
     }

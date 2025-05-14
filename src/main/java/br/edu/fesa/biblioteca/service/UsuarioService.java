@@ -58,6 +58,7 @@ public class UsuarioService implements UserDetailsService {
     }
 
     public Usuario update(Usuario usuario) {
+        usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
         return usuarioRepository.save(usuario);
     }
 

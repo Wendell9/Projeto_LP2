@@ -56,7 +56,6 @@ public class BibliotecaController {
             CookieService.setCookie(response, "usuarioId", String.valueOf(usuarioLogado.getId()), 10000);
             CookieService.setCookie(response, "usuarioEmail", String.valueOf(usuarioLogado.getEmail()), 10000);
             CookieService.setCookie(response, "ADMIN", ADMIN, 10000);
-            redirectAttributes.addAttribute("isAdmin", usuarioLogado.isAdmin()); // Define a variável no 
             return "redirect:/home";
         }
         redirectAttributes.addAttribute("erro", "E-mail ou senha inválidas");

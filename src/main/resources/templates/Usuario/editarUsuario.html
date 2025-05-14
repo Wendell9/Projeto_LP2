@@ -21,6 +21,58 @@
                 float: right;
                 margin-bottom: 20px;
             }
+            .image-container {
+                position: relative;
+                width: 300px;
+                height: 300px;
+            }
+
+            .image {
+                opacity: 1;
+                display: block;
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                object-fit: cover;
+                transition: 0.3s ease;
+            }
+
+            .image-container:hover .image {
+                opacity: 0.3;
+                transform: translateY(-10px); /* sobe ao passar o mouse */
+            }
+
+            .middle {
+                transition: 0.3s ease;
+                opacity: 0;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                text-align: center;
+            }
+
+            .image-container:hover .middle {
+                opacity: 1;
+            }
+
+            .hidden-input {
+                display: none;
+            }
+
+            .upload-btn {
+                background-color: #343a40;
+                color: white;
+                font-size: 16px;
+                padding: 10px 20px;
+                border: none;
+                cursor: pointer;
+            }
+
+            .upload-btn:hover {
+                background-color: #037a4c;
+            }
+
         </style>
     </head>
     <body>
@@ -41,11 +93,12 @@
                         Perfil
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end"> <!-- alinhado à direita -->
+                        <li><a class="dropdown-item" href="/Usuario/Meu_usuario">Meu Usuário</a></li>
                         <li><a class="dropdown-item" href="#">Empréstimos</a></li>
                         <li><a class="dropdown-item" href="#">Configurações</a></li>
                         <li><a class="dropdown-item" href="#">Notificações</a></li>
                         <li th:if="${isAdmin}">
-                            <a class="dropdown-item" href="/Usuario/listarUsuario">Listar Usuários</a>
+                            <a class="dropdown-item" href="/Usuario/lista">Listar Usuários</a>
                         </li>
                         <li><a class="dropdown-item" href="/biblioteca-fesa/sair">Sair</a></li>
                     </ul>
@@ -57,22 +110,27 @@
             <h1>Editar Usuario</h1>
             <form th:action="@{/Usuario/atualizar/{id}(id=${id})}" 
                   th:object="${usuario}" 
-                  method="post">
-                <div class="d-flex justify-content-center mb-3"> <!-- Container centralizado -->
-                    <!-- Se o usuário tem imagem -->
-                    <img th:if="${usuario.imagemEmbase64 != null}" 
-                         th:src="'data:' + ${usuario.tipo_imagem} + ';base64,' + ${usuario.imagemEmbase64}" 
-                         alt="Foto do usuário" 
-                         class="rounded-circle"
-                         style="width: 300px; height: 300px; object-fit: cover;"> 
+                  method="post" enctype="multipart/form-data">
 
-                    <!-- Se o usuário NÃO tem imagem -->
-                    <img th:if="${usuario.imagemEmbase64 == null}" 
-                         src="/images/foto_padrao.jpg" 
-                         alt="Foto do usuário" 
-                         class="rounded-circle"
-                         style="width: 300px; height: 300px; object-fit: cover;"> <!-- Tamanho fixo e ajuste de imagem -->
+                <div class="form-group d-flex justify-content-center mb-3">
+                    <div class="image-container"> <!-- Mudei de 'container' para 'image-container' pra evitar conflito -->
+                        <img 
+                            id="previewImagem"
+                            th:src="${usuario.imagemEmbase64 != null} ? 
+                            'data:' + ${usuario.tipo_imagem} + ';base64,' + ${usuario.imagemEmbase64} : 
+                            '/images/foto_padrao.jpg'" 
+                            alt="Foto do usuário" 
+                            class="rounded-circle image"
+                            style="width: 300px; height: 300px; object-fit: cover;"> 
+
+                        <div class="middle">
+                            <label for="arquivoImagem" class="upload-btn">Upload de Imagem</label>
+                            <input type="file" id="arquivoImagem" name="arquivoImagem" class="hidden-input" accept="image/jpeg, image/png"> 
+                        </div>
+                    </div>
                 </div>
+
+
                 <div class="form-group">
                     <label for="id">Id</label>
                     <input type="text" class="form-control" id="id" th:field="*{id}" placeholder="id" maxlength="100" readonly>
@@ -83,19 +141,34 @@
                 </div>
                 <div class="form-group">
                     <label for="nome">Email</label>
-                    <input type="text" class="form-control" id="nome" th:field="*{email}" placeholder="Email" maxlength="100" required>
+                    <input type="text" class="form-control" id="email" th:field="*{email}" placeholder="Email" maxlength="100" required>
                 </div>
                 <div class="form-group">
                     <label for="nome">Telefone</label>
-                    <input type="text" class="form-control" id="nome" th:field="*{telefone}" placeholder="Telefone" maxlength="100" required>
+                    <input type="text" class="form-control" id="telefone" th:field="*{telefone}" placeholder="Telefone" maxlength="100" required>
                 </div>
                 <div class="form-group">
                     <label for="nome">Senha</label>
-                    <input type="password" class="form-control" id="nome" th:field="*{senha}" placeholder="Senha" maxlength="100" required>
+                    <input type="password" class="form-control" id="senha" th:field="*{senha}" placeholder="Senha" maxlength="100" required>
                 </div>
                 <button type="submit" class="btn btn-primary mt-3">Salvar</button>
                 <a th:href="@{${origem}}" class="btn btn-secondary mt-3">Cancelar</a>
             </form>
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            document.getElementById("arquivoImagem").addEventListener("change", function (event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const preview = document.getElementById("previewImagem");
+                        preview.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        </script>
+
     </body>
 </html>
