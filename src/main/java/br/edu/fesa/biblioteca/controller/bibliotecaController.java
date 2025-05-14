@@ -31,7 +31,7 @@ public class BibliotecaController {
     @GetMapping({"", "/", "/inicio"})
     public String principal(Model model) {
         model.addAttribute("usuario", new Usuario());
-        return "index";
+        return "/index";
     }
 
     // Novo método para redirecionar para a controller de usuário
