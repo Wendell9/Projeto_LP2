@@ -1,8 +1,9 @@
 package br.edu.fesa.biblioteca.controller;
 
 import br.edu.fesa.biblioteca.cadastro.model.Usuario;
+import br.edu.fesa.biblioteca.infraSecurity.TokenService;
+import br.edu.fesa.biblioteca.repository.UsuarioRepository;
 import br.edu.fesa.biblioteca.service.CookieService;
-import static br.edu.fesa.biblioteca.service.CookieService.getCookie;
 import br.edu.fesa.biblioteca.service.UsuarioService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -22,6 +23,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.atomic.AtomicInteger;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.ui.ExtendedModelMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,6 +36,12 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private TokenService tokenService;
+
     // Exibe a página de cadastro
     @GetMapping("/cadastro")
     public String mostrarFormularioCadastro(@RequestParam(name = "sucesso", required = false) String sucesso, Model model, HttpServletRequest request) throws UnsupportedEncodingException {
@@ -41,21 +51,24 @@ public class UsuarioController {
         } else {
             model.addAttribute("sucesso", false);
         }
-        String adminCookie = CookieService.getCookie(request, "ADMIN");
-        model.addAttribute("isAdmin", "true".equals(adminCookie)); // Define a variável no m
         model.addAttribute("usuario", new Usuario());
         return "Usuario/cadastro";
     }
 
-    @PostMapping("/cadastro")
+    @PostMapping("/cadastrar")
     public String cadastrarUsuario(@ModelAttribute Usuario usuario, Model model, @RequestParam("arquivoImagem") MultipartFile arquivoImagem,
             RedirectAttributes redirectAttributes, HttpServletRequest request) throws UnsupportedEncodingException {
-        // Verifica se o e-mail já existe
-        // Passa o valor de sucesso para o modelo (se existir)
-        String adminCookie = CookieService.getCookie(request, "ADMIN");
-        model.addAttribute("isAdmin", "true".equals(adminCookie)); // Define a variável no m
         try {
-            // Processa a imagem
+            Usuario usuarioNovo = new Usuario();
+            ModelMap erros = verificaerros(usuario);
+
+            if (!erros.isEmpty()) {
+                // Copia os erros para o model principal
+                model.addAllAttributes(erros);
+                model.addAttribute("usuario", usuario); // opcional: manter os dados preenchidos
+                return "Usuario/cadastro";
+            }
+
             if (!arquivoImagem.isEmpty()) {
                 String nomeArquivo = arquivoImagem.getOriginalFilename();
                 usuario.setImagem(arquivoImagem.getBytes());
@@ -65,12 +78,12 @@ public class UsuarioController {
                 model.addAttribute("erro", "E-mail já está cadastrado.");
                 model.addAttribute("usuario", usuario); // Preenche o formulário com os dados
                 return "Usuario/cadastro"; // Volta para a página de cadastro com os dados já preenchidos
+            } else {
+                usuarioRepository.save(usuario);
+                model.addAttribute("sucesso", true);
+                model.addAttribute("usuario", usuarioNovo);
+                return "Usuario/cadastro"; // Sem parâmetro na URL
             }
-
-            // Salva o usuário se o e-mail não existir
-            usuarioService.save(usuario);
-
-            return "redirect:/Usuario/cadastro?sucesso"; // Redireciona após sucesso
         } catch (IOException e) {
             model.addAttribute("erro", "Falha ao processar imagem: " + e.getMessage());
             model.addAttribute("usuario", usuario); // Preenche o formulário com os dados
@@ -80,8 +93,6 @@ public class UsuarioController {
 
     @GetMapping("/lista")
     public String listar(ModelMap model, HttpServletRequest request) throws UnsupportedEncodingException {
-        String adminCookie = CookieService.getCookie(request, "ADMIN");
-        model.addAttribute("isAdmin", "true".equals(adminCookie)); // Define a variável
         List<Usuario> Usuarios = usuarioService.findAll();
 
         List<Usuario> sortedUsuarios = Usuarios.stream()
@@ -93,8 +104,6 @@ public class UsuarioController {
 
     @GetMapping("/Meu_usuario")
     public String meuUsuario(HttpServletRequest request, RedirectAttributes redirectAttributes, Model model) throws UnsupportedEncodingException {
-        String adminCookie = CookieService.getCookie(request, "ADMIN");
-        model.addAttribute("isAdmin", "true".equals(adminCookie)); // Define a variável
         try {
 
             String usuarioId = CookieService.getCookie(request, "usuarioId");
@@ -110,6 +119,7 @@ public class UsuarioController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/editar/{id}")
     public String editar(@PathVariable UUID id, ModelMap model, HttpServletRequest request) throws UnsupportedEncodingException {
         String adminCookie = CookieService.getCookie(request, "ADMIN");
@@ -121,11 +131,10 @@ public class UsuarioController {
         return "Usuario/editarUsuario";
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping("/atualizar/{id}")
     public String atualizar(@PathVariable UUID id, @Valid
             @ModelAttribute Usuario usuario, BindingResult bindingResult, ModelMap model, HttpServletRequest request, @RequestParam("arquivoImagem") MultipartFile arquivoImagem) throws UnsupportedEncodingException, IOException {
-        String adminCookie = CookieService.getCookie(request, "ADMIN");
-        model.addAttribute("isAdmin", "true".equals(adminCookie)); // Define a variável
         if (!arquivoImagem.isEmpty()) {
             String nomeArquivo = arquivoImagem.getOriginalFilename();
             usuario.setImagem(arquivoImagem.getBytes());
@@ -146,27 +155,39 @@ public class UsuarioController {
         return "redirect:/Usuario/lista";
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/salvar")
     public String salvar(Usuario usuario, HttpServletRequest request, Model model) throws UnsupportedEncodingException {
-        String adminCookie = CookieService.getCookie(request, "ADMIN");
-        model.addAttribute("isAdmin", "true".equals(adminCookie)); // Define a variável
         usuarioService.save(usuario);
         return "Usuario/listarUsuario";
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @PostMapping("/excluir/{id}")
     public String confirmarExclusao(@PathVariable UUID id, Model model, HttpServletRequest request) throws UnsupportedEncodingException {
-        String adminCookie = CookieService.getCookie(request, "ADMIN");
-        model.addAttribute("isAdmin", "true".equals(adminCookie)); // Define a variável
         usuarioService.deleteById(id);
         return "redirect:/Usuario/lista";
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/remover/{id}")
     public String remover(@PathVariable UUID id, Model model, HttpServletRequest request) throws UnsupportedEncodingException {
-        String adminCookie = CookieService.getCookie(request, "ADMIN");
-        model.addAttribute("isAdmin", "true".equals(adminCookie)); // Define a variávelF
         model.addAttribute("usuario", usuarioService.findById(id).orElseThrow(() -> new RuntimeException("Usuário não encontrado")));
         return "Usuario/remover";
+    }
+
+    public ModelMap verificaerros(Usuario usuario) {
+        ModelMap erros = new ModelMap();
+
+        if (usuario.getNome().length() < 10) {
+            erros.addAttribute("ErrorNome", "Favor insira o nome completo");
+        }
+        if (usuario.getSenha() == null || usuario.getSenha().length() < 6) {
+            erros.addAttribute("ErrorSenha", "A senha deve ter ao menos 6 caracteres");
+        }
+        if (usuario.getSenha() == null || usuario.getTelefone().length() > 11 || usuario.getTelefone().length() < 10) {
+            erros.addAttribute("ErrorTelefone", "O telefone deve ter de 10 a 11 digitos");
+        }
+        return erros;
     }
 }

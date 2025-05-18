@@ -86,12 +86,12 @@
             </div>
 
             <!-- Mensagem de sucesso -->
-            <div th:if="${param.sucesso}" class="alert alert-success">
-                Cadastro realizado com sucesso!
+            <div th:if="${sucesso}" class="alert alert-success">
+                <p>Cadastro realizado com sucesso!</p>
             </div>
 
             <!-- ATENÇÃO: Adicionado enctype para upload -->
-            <form th:action="@{/Usuario/cadastro}" method="post" th:object="${usuario}" enctype="multipart/form-data">
+            <form th:action="@{/Usuario/cadastrar}" method="post" th:object="${usuario}" enctype="multipart/form-data">
 
                 <div class="form-group d-flex justify-content-center mb-3">
                     <div class="image-container"> <!-- Mudei de 'container' para 'image-container' pra evitar conflito -->
@@ -112,6 +112,7 @@
                 <div class="form-group">
                     <label>Nome</label>
                     <input type="text" class="form-control" th:field="*{nome}" placeholder="Digite seu nome" required>
+                    <div class="text-danger" th:if="${ErrorNome}" th:text="${ErrorNome}"></div>
                 </div>
 
                 <div class="form-group">
@@ -122,11 +123,13 @@
                 <div class="form-group">
                     <label>Senha</label>
                     <input type="password" class="form-control" th:field="*{senha}" placeholder="Digite sua senha" required>
+                     <div class="text-danger" th:if="${ErrorSenha}" th:text="${ErrorSenha}"></div>
                 </div>
 
                 <div class="form-group">
                     <label>Telefone</label>
                     <input type="text" class="form-control" th:field="*{telefone}" placeholder="(XX) XXXXX-XXXX" required>
+                     <div class="text-danger" th:if="${ErrorTelefone}" th:text="${ErrorTelefone}"></div>
                 </div>
 
                 <div class="mt-4">

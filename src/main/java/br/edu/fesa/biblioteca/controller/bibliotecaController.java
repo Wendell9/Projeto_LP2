@@ -5,6 +5,7 @@
 package br.edu.fesa.biblioteca.controller;
 
 import br.edu.fesa.biblioteca.cadastro.model.Usuario;
+import br.edu.fesa.biblioteca.infraSecurity.TokenService;
 import br.edu.fesa.biblioteca.service.CookieService;
 import br.edu.fesa.biblioteca.service.UsuarioService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,6 +28,9 @@ public class BibliotecaController {
 
     @Autowired
     private UsuarioService usuarioService;
+    
+    @Autowired
+    private TokenService tokenService;
 
     @GetMapping({"", "/", "/inicio"})
     public String principal(Model model) {
@@ -41,26 +45,28 @@ public class BibliotecaController {
     }
 
     @PostMapping("/login")
-    public String logar(Usuario usuario, RedirectAttributes redirectAttributes, HttpServletResponse response) throws UnsupportedEncodingException {
-        String ADMIN;
+    public String logar(Usuario usuario, RedirectAttributes redirectAttributes, HttpServletResponse response,Model model) throws UnsupportedEncodingException {
         if (!usuarioService.emailExiste(usuario.getEmail())) {
-            redirectAttributes.addAttribute("erro", "E-mail não existe");
-            redirectAttributes.addAttribute("usuario", usuario); // Preenche o formulário com os dados
-            return "redirect:/biblioteca-fesa"; // Volta para a página de cadastro com os dados já preenchidos
+            model.addAttribute("erro", "E-mail não existe");
+            model.addAttribute("usuario", usuario); // Preenche o formulário com os dados
+            return "index"; // Volta para a página de cadastro com os dados já preenchidos
         }
 
         Usuario usuarioLogado = usuarioService.login(usuario.getEmail(), usuario.getSenha());
         // Busca o usuário no banco
+        
+        
+        
         if (usuarioLogado != null) {
-            ADMIN = (usuarioLogado.isAdmin()) ? "true" : "false";
+            String token = this.tokenService.generateToken(usuarioLogado);
+            
+            CookieService.setCookie(response, "token", token, 10000);
             CookieService.setCookie(response, "usuarioId", String.valueOf(usuarioLogado.getId()), 10000);
-            CookieService.setCookie(response, "usuarioEmail", String.valueOf(usuarioLogado.getEmail()), 10000);
-            CookieService.setCookie(response, "ADMIN", ADMIN, 10000);
             return "redirect:/home";
         }
-        redirectAttributes.addAttribute("erro", "E-mail ou senha inválidas");
+        model.addAttribute("erro", "E-mail ou senha inválidas");
 
-        return "redirect:/biblioteca-fesa";
+        return "index";
     }
 
     @GetMapping("/sair")
@@ -71,7 +77,6 @@ public class BibliotecaController {
 
     void limpaCookies(HttpServletResponse response) throws UnsupportedEncodingException {
         CookieService.setCookie(response, "usuarioId", "", 0);
-        CookieService.setCookie(response, "usuarioEmail", "", 0);
-        CookieService.setCookie(response, "ADMIN", "", 0);
+        CookieService.setCookie(response, "token", "", 0);
     }
 }

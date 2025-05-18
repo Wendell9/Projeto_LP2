@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <head>
         <meta charset="UTF-8">
         <title>Editar Usuario</title>
@@ -97,7 +98,7 @@
                         <li><a class="dropdown-item" href="#">Empréstimos</a></li>
                         <li><a class="dropdown-item" href="#">Configurações</a></li>
                         <li><a class="dropdown-item" href="#">Notificações</a></li>
-                        <li th:if="${isAdmin}">
+                        <li sec:authorize="hasRole('ADMIN')">
                             <a class="dropdown-item" href="/Usuario/lista">Listar Usuários</a>
                         </li>
                         <li><a class="dropdown-item" href="/biblioteca-fesa/sair">Sair</a></li>
