@@ -40,38 +40,43 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        try {
+            String path = request.getRequestURI();
+            System.out.println(">>> SecurityFilter URI: '" + request.getRequestURI() + "'");
 
-        String path = request.getRequestURI();
-        System.out.println(">>> SecurityFilter URI: '" + request.getRequestURI() + "'");
-
-        // Ignora as rotas públicas
-        if (path.equals("/auth/login") || path.equals("/auth/register") || path.equals("/Usuario/cadastro") || path.startsWith("/images/") || path.equals("/biblioteca-fesa/")
-                || path.equals("/biblioteca-fesa") || path.equals("/biblioteca-fesa/login") || path.equals("/Usuario/cadastrar")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        var token = this.recoverToken(request);
-        var login = tokenService.validateToken(token);
-
-        if (login != null) {
-            Usuario user = userRepository.findByEmail(login).orElseThrow(() -> new RuntimeException("User Not Found"));
-
-            List<GrantedAuthority> authorities; // Declarada fora do if/else
-
-            if (user.isAdmin()) {
-                authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN"));
-            } else {
-                authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+            // Ignora as rotas públicas
+            if (path.equals("/auth/login") || path.equals("/auth/register") || path.equals("/Usuario/cadastro") || path.startsWith("/images/") || path.equals("/biblioteca-fesa/")
+                    || path.equals("/biblioteca-fesa") || path.equals("/biblioteca-fesa/login") || path.equals("/Usuario/cadastrar") || path.startsWith("/h2-console")) {
+                filterChain.doFilter(request, response);
+                return;
             }
-            var authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            var token = this.recoverToken(request);
+            var login = tokenService.validateToken(token);
+
+            if (login != null) {
+                Usuario user = userRepository.findByEmail(login).orElseThrow(() -> new RuntimeException("User Not Found"));
+
+                List<GrantedAuthority> authorities; // Declarada fora do if/else
+
+                if (user.isAdmin()) {
+                    authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN"));
+                } else {
+                    authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+                }
+                var authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+            filterChain.doFilter(request, response);
+        } catch (Exception e) {
+            System.out.println("Erro na autenticação: " + e.getMessage());
+            response.sendRedirect("/biblioteca-fesa");
         }
-        filterChain.doFilter(request, response);
+
     }
 
     private String recoverToken(HttpServletRequest request) throws UnsupportedEncodingException {
-        var tolkien = this.cookieService.getCookie(request, "token");
+        var tolkien = (String) request.getSession(false).getAttribute("token");
         return tolkien;
     }
 }

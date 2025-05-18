@@ -35,6 +35,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                 .requestMatchers(HttpMethod.POST, "/Usuario/cadastrar").permitAll()
+                .requestMatchers("/h2-console").permitAll()
+                .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers("/Usuario/cadastro").permitAll()
                 .requestMatchers("/images/**").permitAll()
                 .requestMatchers("/biblioteca-fesa/").permitAll()
@@ -44,6 +46,9 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf.disable())
+                .headers(headers -> headers
+                .frameOptions(frame -> frame.sameOrigin()) // Permite iframes da mesma origem
+                )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

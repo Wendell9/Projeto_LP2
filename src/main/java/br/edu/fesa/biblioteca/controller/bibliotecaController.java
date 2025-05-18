@@ -8,7 +8,9 @@ import br.edu.fesa.biblioteca.cadastro.model.Usuario;
 import br.edu.fesa.biblioteca.infraSecurity.TokenService;
 import br.edu.fesa.biblioteca.service.CookieService;
 import br.edu.fesa.biblioteca.service.UsuarioService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,7 +30,7 @@ public class BibliotecaController {
 
     @Autowired
     private UsuarioService usuarioService;
-    
+
     @Autowired
     private TokenService tokenService;
 
@@ -45,7 +47,7 @@ public class BibliotecaController {
     }
 
     @PostMapping("/login")
-    public String logar(Usuario usuario, RedirectAttributes redirectAttributes, HttpServletResponse response,Model model) throws UnsupportedEncodingException {
+    public String logar(Usuario usuario, RedirectAttributes redirectAttributes, HttpServletResponse response, Model model, HttpSession session) throws UnsupportedEncodingException {
         if (!usuarioService.emailExiste(usuario.getEmail())) {
             model.addAttribute("erro", "E-mail não existe");
             model.addAttribute("usuario", usuario); // Preenche o formulário com os dados
@@ -53,15 +55,11 @@ public class BibliotecaController {
         }
 
         Usuario usuarioLogado = usuarioService.login(usuario.getEmail(), usuario.getSenha());
-        // Busca o usuário no banco
-        
-        
-        
+
         if (usuarioLogado != null) {
             String token = this.tokenService.generateToken(usuarioLogado);
-            
-            CookieService.setCookie(response, "token", token, 10000);
-            CookieService.setCookie(response, "usuarioId", String.valueOf(usuarioLogado.getId()), 10000);
+            session.setAttribute("token", token);
+            session.setAttribute("usuarioId", String.valueOf(usuarioLogado.getId()));
             return "redirect:/home";
         }
         model.addAttribute("erro", "E-mail ou senha inválidas");
@@ -70,13 +68,8 @@ public class BibliotecaController {
     }
 
     @GetMapping("/sair")
-    public String sair(HttpServletResponse response) throws UnsupportedEncodingException {
-        limpaCookies(response);
-        return  "redirect:/biblioteca-fesa";
-    }
-
-    void limpaCookies(HttpServletResponse response) throws UnsupportedEncodingException {
-        CookieService.setCookie(response, "usuarioId", "", 0);
-        CookieService.setCookie(response, "token", "", 0);
+    public String sair(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
+        request.getSession().invalidate(); // encerra a sessão
+        return "redirect:/biblioteca-fesa";
     }
 }

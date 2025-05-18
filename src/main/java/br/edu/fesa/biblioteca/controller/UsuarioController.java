@@ -79,7 +79,7 @@ public class UsuarioController {
                 model.addAttribute("usuario", usuario); // Preenche o formulário com os dados
                 return "Usuario/cadastro"; // Volta para a página de cadastro com os dados já preenchidos
             } else {
-                usuarioRepository.save(usuario);
+                usuarioService.save(usuario);
                 model.addAttribute("sucesso", true);
                 model.addAttribute("usuario", usuarioNovo);
                 return "Usuario/cadastro"; // Sem parâmetro na URL
@@ -106,7 +106,7 @@ public class UsuarioController {
     public String meuUsuario(HttpServletRequest request, RedirectAttributes redirectAttributes, Model model) throws UnsupportedEncodingException {
         try {
 
-            String usuarioId = CookieService.getCookie(request, "usuarioId");
+            String usuarioId = (String) request.getSession(false).getAttribute("usuarioId");
             UUID uuid = UUID.fromString(usuarioId);
             Usuario user = usuarioService.findById(uuid).get();
             user.setImagemEmbase64();
@@ -135,24 +135,27 @@ public class UsuarioController {
     @PostMapping("/atualizar/{id}")
     public String atualizar(@PathVariable UUID id, @Valid
             @ModelAttribute Usuario usuario, BindingResult bindingResult, ModelMap model, HttpServletRequest request, @RequestParam("arquivoImagem") MultipartFile arquivoImagem) throws UnsupportedEncodingException, IOException {
+        Usuario user = usuarioService.findById(id).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));;
         if (!arquivoImagem.isEmpty()) {
             String nomeArquivo = arquivoImagem.getOriginalFilename();
-            usuario.setImagem(arquivoImagem.getBytes());
-            usuario.setTipo_imagem(nomeArquivo.substring(nomeArquivo.lastIndexOf('.') + 1));
+            user.setImagem(arquivoImagem.getBytes());
+            user.setTipo_imagem(nomeArquivo.substring(nomeArquivo.lastIndexOf('.') + 1));
         }
         if (bindingResult.hasErrors()) {
             model.addAttribute("usuario", usuario);
             return "/usuario/editar";
         }
-        Usuario user = usuarioService.findById(id).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));;
+
         user.setEmail(usuario.getEmail());
         user.setNome(usuario.getNome());
         user.setSenha(usuario.getSenha());
         user.setTelefone(usuario.getTelefone());
-        user.setImagem(usuario.getImagem());
-        user.setTipo_imagem(usuario.getTipo_imagem());
         usuarioService.update(user);
-        return "redirect:/Usuario/lista";
+        if (user.isAdmin()) {
+            return "redirect:/Usuario/lista";
+        } else {
+            return "redirect:/home";
+        }
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
