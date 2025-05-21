@@ -1,5 +1,13 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package br.edu.fesa.biblioteca.cadastro.model;
 
+/**
+ *
+ * @author guind
+ */
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,7 +24,7 @@ import java.util.UUID;
 public class Livro implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO) // Usando AUTO para gerar UUID
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
@@ -47,22 +55,32 @@ public class Livro implements Serializable {
     private String CapaEmbase64;
 
     @Lob
-    @Column(name = "Capa", columnDefinition = "VARBINARY(MAX)")
+    @Column(name = "Capa", columnDefinition = "VARBINARY(MAX)") // Para SQL Server
+    // Ou alternativamente para outros bancos:
+    // @Column(columnDefinition = "LONGBLOB") // MySQL
+    // @Column(columnDefinition = "BYTEA") // PostgreSQL
     private byte[] capa;
+
+    public byte[] getCapa() {
+        return capa;
+    }
+
+    public void setCapa(byte[] capa) {
+        this.capa = capa;
+    }
+
+
+    public Livro() {}
 
     // Getters e Setters
     public UUID getId() {
-        return id;
+    return id;
     }
 
     public void setId(UUID id) {
-        this.id = id;
+    this.id = id;
     }
 
-    // Método para gerar UUID automaticamente
-    public void gerarId() {
-        this.id = UUID.randomUUID();  // Gera um UUID único
-    }
 
     public String getTitulo() {
         return titulo;
@@ -133,18 +151,7 @@ public class Livro implements Serializable {
     }
 
     public void setCapaEmbase64() {
-        if (capa != null) {
-            this.CapaEmbase64 = Base64.getEncoder().encodeToString(capa);
-        } else {
-            this.CapaEmbase64 = null;
-        }
-    }
-
-    public byte[] getCapa() {
-        return capa;
-    }
-
-    public void setCapa(byte[] capa) {
-        this.capa = capa;
+        this.CapaEmbase64 = Base64.getEncoder().encodeToString(capa);
     }
 }
+

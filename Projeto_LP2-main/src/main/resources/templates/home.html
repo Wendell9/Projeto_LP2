@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -30,17 +31,17 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end"> <!-- alinhado à direita -->
                         <li><a class="dropdown-item" href="/Usuario/Meu_usuario">Meu Usuário</a></li>
-                        <li th:if="${isAdmin}">
-                        <a class="dropdown-item" href="/Livro/cadastro">Cadastrar Livro</a>
-                        </li>
                         <li><a class="dropdown-item" href="#">Empréstimos</a></li>
                         <li><a class="dropdown-item" href="#">Configurações</a></li>
                         <li><a class="dropdown-item" href="#">Notificações</a></li>
-                        <li th:if="${isAdmin}">
+                        <li sec:authorize="hasRole('ADMIN')">
                             <a class="dropdown-item" href="/Usuario/lista">Listar Usuários</a>
                         </li>
-                        <li th:if="${isAdmin}">
-                            <a class="dropdown-item" href="/Livro/lista">Listar Livros</a>
+                        <li sec:authorize="hasRole('ADMIN')"> 
+                             <a class="dropdown-item" href="/Livro/cadastro">Cadastrar Livros</a>
+                        </li>
+                        <li sec:authorize="hasRole('ADMIN')"> 
+                             <a class="dropdown-item" href="/Livro/listarLivro">Listar Livros</a>
                         </li>
                         <li><a class="dropdown-item" href="/biblioteca-fesa/sair">Sair</a></li>
                     </ul>

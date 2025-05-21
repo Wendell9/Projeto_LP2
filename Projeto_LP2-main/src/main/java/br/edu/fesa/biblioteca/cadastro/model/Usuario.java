@@ -27,13 +27,13 @@ public class Usuario implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
-
+    
     @Column(nullable = false, length = 100)
     private String nome;
 
     @Column(nullable = false, unique = true, length = 100)
     private String email;
-
+    
     @Column(nullable = false)
     private String senha;
 

@@ -13,11 +13,13 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Optional;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author guind
  */
+@Service
 public class CookieService {
 
     public static void setCookie(HttpServletResponse response, String key, String valor, int segundos) throws UnsupportedEncodingException {
