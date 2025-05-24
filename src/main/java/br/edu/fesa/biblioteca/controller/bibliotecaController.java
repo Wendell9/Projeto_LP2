@@ -26,7 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
  */
 @Controller
 @RequestMapping("/biblioteca-fesa")
-public class BibliotecaController {
+public class bibliotecaController {
 
     @Autowired
     private UsuarioService usuarioService;

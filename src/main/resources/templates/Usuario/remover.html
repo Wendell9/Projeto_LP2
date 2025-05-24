@@ -41,13 +41,19 @@
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Perfil
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end"> <!-- alinhado à direita -->
+                     <ul class="dropdown-menu dropdown-menu-end"> <!-- alinhado à direita -->
                         <li><a class="dropdown-item" href="/Usuario/Meu_usuario">Meu Usuário</a></li>
                         <li><a class="dropdown-item" href="#">Empréstimos</a></li>
                         <li><a class="dropdown-item" href="#">Configurações</a></li>
                         <li><a class="dropdown-item" href="#">Notificações</a></li>
                         <li sec:authorize="hasRole('ADMIN')">
                             <a class="dropdown-item" href="/Usuario/lista">Listar Usuários</a>
+                        </li>
+                        <li sec:authorize="hasRole('ADMIN')"> 
+                             <a class="dropdown-item" href="/Livro/cadastro">Cadastrar Livros</a>
+                        </li>
+                        <li sec:authorize="hasRole('ADMIN')"> 
+                             <a class="dropdown-item" href="/Livro/listarLivro">Listar Livros</a>
                         </li>
                         <li><a class="dropdown-item" href="/biblioteca-fesa/sair">Sair</a></li>
                     </ul>

@@ -101,6 +101,12 @@
                         <li sec:authorize="hasRole('ADMIN')">
                             <a class="dropdown-item" href="/Usuario/lista">Listar Usuários</a>
                         </li>
+                        <li sec:authorize="hasRole('ADMIN')"> 
+                             <a class="dropdown-item" href="/Livro/cadastro">Cadastrar Livros</a>
+                        </li>
+                        <li sec:authorize="hasRole('ADMIN')"> 
+                             <a class="dropdown-item" href="/Livro/listarLivro">Listar Livros</a>
+                        </li>
                         <li><a class="dropdown-item" href="/biblioteca-fesa/sair">Sair</a></li>
                     </ul>
                 </li>
