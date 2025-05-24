@@ -62,8 +62,6 @@ public class LivroController {
 
     @GetMapping("/listarLivro")
     public String listar(ModelMap model, HttpServletRequest request) throws UnsupportedEncodingException {
-    String adminCookie = CookieService.getCookie(request, "ADMIN");
-    model.addAttribute("isAdmin", "true".equals(adminCookie));
 
     List<Livro> livros = livroService.findAll().stream()
             .sorted((l1, l2) -> l1.getTitulo().compareToIgnoreCase(l2.getTitulo()))
@@ -76,8 +74,6 @@ public class LivroController {
 
     @GetMapping("/editar/{id}")
     public String editar(@PathVariable UUID id, ModelMap model, HttpServletRequest request) throws UnsupportedEncodingException {
-        String adminCookie = CookieService.getCookie(request, "ADMIN");
-        model.addAttribute("isAdmin", "true".equals(adminCookie));
 
         Livro livro = livroService.findById(id).orElseThrow(() -> new RuntimeException("Livro não encontrado"));
         livro.setCapaEmbase64();
@@ -90,9 +86,6 @@ public class LivroController {
     public String atualizar(@PathVariable UUID id, @Valid @ModelAttribute Livro livro, ModelMap model,
                             @RequestParam("arquivoImagem") MultipartFile arquivoImagem,
                             HttpServletRequest request) throws IOException, UnsupportedEncodingException {
-        String adminCookie = CookieService.getCookie(request, "ADMIN");
-        model.addAttribute("isAdmin", "true".equals(adminCookie));
-
         Livro livroExistente = livroService.findById(id).orElseThrow(() -> new RuntimeException("Livro não encontrado"));
 
         livroExistente.setTitulo(livro.getTitulo());
@@ -103,6 +96,7 @@ public class LivroController {
         livroExistente.setCategoria(livro.getCategoria());
         livroExistente.setQuantidadeTotal(livro.getQuantidadeTotal());
         livroExistente.setQuantidadeDisponivel(livro.getQuantidadeDisponivel());
+        livroExistente.setSinopse(livro.getSinopse());
 
         if (!arquivoImagem.isEmpty()) {
             livroExistente.setCapa(arquivoImagem.getBytes());

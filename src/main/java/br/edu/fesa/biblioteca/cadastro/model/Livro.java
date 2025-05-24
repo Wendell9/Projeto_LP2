@@ -51,6 +51,17 @@ public class Livro implements Serializable {
 
     @Column(nullable = false)
     private Integer quantidadeDisponivel;
+    
+    @Column(columnDefinition = "TEXT") // Permite armazenar textos longos
+    private String sinopse;
+
+    public String getSinopse() {
+        return sinopse;
+    }
+
+    public void setSinopse(String sinopse) {
+        this.sinopse = sinopse;
+    }
 
     private String CapaEmbase64;
 
