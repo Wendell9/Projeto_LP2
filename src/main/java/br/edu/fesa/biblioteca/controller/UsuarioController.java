@@ -3,7 +3,6 @@ package br.edu.fesa.biblioteca.controller;
 import br.edu.fesa.biblioteca.cadastro.model.Usuario;
 import br.edu.fesa.biblioteca.infraSecurity.TokenService;
 import br.edu.fesa.biblioteca.repository.UsuarioRepository;
-import br.edu.fesa.biblioteca.service.CookieService;
 import br.edu.fesa.biblioteca.service.UsuarioService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -23,9 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.ui.ExtendedModelMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -122,8 +119,6 @@ public class UsuarioController {
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/editar/{id}")
     public String editar(@PathVariable UUID id, ModelMap model, HttpServletRequest request) throws UnsupportedEncodingException {
-        String adminCookie = CookieService.getCookie(request, "ADMIN");
-        model.addAttribute("isAdmin", "true".equals(adminCookie)); // Define a variável
         Usuario user = usuarioService.findById(id).get();
         user.setImagemEmbase64();
         model.addAttribute("usuario", user);

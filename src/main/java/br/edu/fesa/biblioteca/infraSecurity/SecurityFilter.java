@@ -10,8 +10,6 @@ package br.edu.fesa.biblioteca.infraSecurity;
  */
 import br.edu.fesa.biblioteca.cadastro.model.Usuario;
 import br.edu.fesa.biblioteca.repository.UsuarioRepository;
-import br.edu.fesa.biblioteca.service.CookieService;
-import static br.edu.fesa.biblioteca.service.CookieService.getCookie;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,8 +33,6 @@ public class SecurityFilter extends OncePerRequestFilter {
     TokenService tokenService;
     @Autowired
     UsuarioRepository userRepository;
-    @Autowired
-    CookieService cookieService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

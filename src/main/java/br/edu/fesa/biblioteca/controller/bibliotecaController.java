@@ -6,7 +6,6 @@ package br.edu.fesa.biblioteca.controller;
 
 import br.edu.fesa.biblioteca.cadastro.model.Usuario;
 import br.edu.fesa.biblioteca.infraSecurity.TokenService;
-import br.edu.fesa.biblioteca.service.CookieService;
 import br.edu.fesa.biblioteca.service.UsuarioService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

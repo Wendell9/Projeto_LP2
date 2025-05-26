@@ -1,0 +1,61 @@
+
+<div th:fragment="detalhesUsuario" class="container mt-5">
+    <div class="card shadow p-4">
+        <h1 class="text-center">Detalhes do Usuário</h1>
+        <div class="row">
+            <!-- Imagem do usuário à esquerda -->
+            <div class="col-md-4 d-flex justify-content-center align-items-start">
+                <div class="image-container">
+                    <img th:if="${usuario.imagemEmbase64 != null}" 
+                         th:src="'data:image/jpeg;base64,' + ${usuario.imagemEmbase64}" 
+                         class="rounded-circle image"
+                         style="width: 250px; height: 250px; object-fit: cover;">
+
+                    <img th:if="${usuario.imagemEmbase64 == null}" 
+                         src="/images/foto_padrao.jpg" 
+                         class="rounded-circle image"
+                         style="width: 250px; height: 250px; object-fit: cover;">
+                </div>
+            </div>
+
+            <!-- Informações do usuário à direita -->
+            <div class="col-md-8">
+                <div class="form-group">
+                    <label>Nome</label>
+                    <input type="text" class="form-control" th:value="${usuario.nome}" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input id="email" type="email" class="form-control" th:value="${usuario.email}" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label>Telefone</label>
+                    <input type="text" class="form-control" th:value="${usuario.telefone}" readonly>
+                </div>
+            </div>     
+        </div>
+    </div>
+    <div class="container">
+        <h1 class="text-center mt-4">Lista de Livros para Empréstimo</h1>
+        <input type="text" id="searchBox" class="form-control mb-3" placeholder="Digite o título do livro..." onkeyup="filtrarLivros()">
+        <ul class="list-group">
+            <li th:each="livro : ${livros}" class="list-group-item">
+                <label class="d-flex align-items-center stretched-link">
+                    <input class="form-check-input me-2" type="checkbox" th:data-id="${livro.id}" th:data-titulo="${livro.titulo}">
+                    <img th:src="'data:image/jpeg;base64,' + ${livro.CapaEmbase64}" alt="Capa" class="capa-thumbnail me-2">
+                    <div>
+                        <strong th:text="${livro.titulo}"></strong>
+                        <p class="mb-0 text-muted" th:text="'Autor: ' + ${livro.autor}"></p>
+                        <p class="mb-0 text-muted" th:text="'Editora: ' + ${livro.editora}"></p>
+                        <p class="mb-0 text-muted" th:text="'Ano: ' + ${livro.anoPublicacao}"></p>
+                        <p class="mb-0 text-muted" th:text="'Disponível: ' + ${livro.quantidadeDisponivel}"></p>
+                    </div>
+                </label>
+            </li>
+        </ul>
+    </div>
+    <!-- Botão para enviar -->
+    <button type="button" class="btn btn-primary mt-5" onclick="enviarEmprestimo()">Confirmar Empréstimo</button>
+</div>

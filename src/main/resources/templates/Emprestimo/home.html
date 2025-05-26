@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head>
+        <title>Empréstimo</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <style>
+            body {
+                padding-top: 70px;
+                min-height: 120vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                padding-bottom: 3%;
+            }
+            .vertical-group-centered {
+                display: flex;
+                flex-direction: column;
+                width: 70%;      /* largura de 70% */
+                margin: 0 auto;  /* centraliza horizontalmente */
+            }
+
+            .vertical-group-centered input,
+            .vertical-group-centered select {
+                width: 100%;
+            }
+            .capa-thumbnail {
+                width: 60px;
+                height: 80px;
+                object-fit: cover;
+                border-radius: 4px;
+            }
+            .scroll-container {
+                max-height: 400px; /* Define altura fixa */
+                overflow-y: auto; /* Permite rolagem vertical */
+                border: 1px solid #ccc;
+                padding: 10px;
+                border-radius: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <header th:replace="navbar :: menu"></header>
+
+        <div class="vertical-group-centered mb-3">
+            <div class="input-group mb-3">
+                <input type="text" id="email" class="form-control"
+                       placeholder="Digite o email"
+                       aria-label="Recipient's email"
+                       aria-describedby="basic-addon2"
+                       onkeyup="buscarUsuario()">
+                <button class="btn btn-outline-secondary" onclick="carregarUsuario()" type="button">Buscar</button>
+            </div>
+
+            <select class="form-select" id="sugestoes" size="5" onchange="selecionarEmail(this.value)">
+                <option value="" disabled selected>Selecione um email</option>
+            </select>
+        </div>
+        <div id="detalhesUsuario">
+        </div>
+
+        <input type="hidden" name="livrosSelecionados" id="livrosSelecionados">
+
+
+        <script>
+            function enviarEmprestimo() {
+                let livrosSelecionados = [];
+                const checkboxesMarcados = document.querySelectorAll('.list-group-item input[type="checkbox"]:checked');
+
+                // Extrai os data-id dos checkboxes marcados
+                const idsSelecionados = Array.from(checkboxesMarcados).map(checkbox => {
+                    livrosSelecionados.push(checkbox.getAttribute('data-id'));
+                });
+
+                // Exibe os IDs no console (ou pode enviar para o backend via AJAX)
+                console.log("IDs selecionados:", idsSelecionados);
+
+                let data = {
+                    email: document.getElementById("email").value,
+                    livros: livrosSelecionados
+                };
+
+                fetch("/Emprestimo/realizar", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(data)
+                }).then(response => {
+                    if (response.ok) {
+                        alert("Empréstimo registrado com sucesso!");
+                        window.location.href = "/Emprestimo/sucesso";
+                    } else {
+                        alert("Erro ao registrar empréstimo.");
+                    }
+                });
+            }
+
+
+            function buscarUsuario() {
+                let email = document.getElementById("email").value;
+                let select = document.getElementById("sugestoes");
+
+
+                fetch(`/Emprestimo/buscarUsuario?email=${email}`)
+                        .then(response => {
+                            if (!response.ok)
+                                throw new Error("Erro na requisição");
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.length === 0) {
+                                select.style.display = "none"; // Oculta se não houver resultados
+                                return;
+                            }
+
+                            select.innerHTML = '<option value="" disabled selected>Selecione um email</option>';
+                            data.forEach(usuario => {
+                                let option = document.createElement("option");
+                                option.value = usuario.email;
+                                option.innerText = usuario.email;
+                                select.appendChild(option);
+                            });
+
+                            select.style.display = "block"; // Exibe sugestões
+                        })
+                        .catch(error => console.error("Erro na busca:", error));
+            }
+            function selecionarEmail(email) {
+                document.getElementById("email").value = email;
+            }
+            function carregarDadosUsuario() {
+                fetch("/emprestimo/carregaDadosUsuario")
+                        .then(response => response.text()) // Retorna HTML
+                        .then(data => {
+                            document.getElementById("conteudoDinamico").innerHTML = data;
+                        })
+                        .catch(error => console.error("Erro ao carregar o fragmento:", error));
+            }
+            function carregarUsuario() {
+                let email = document.getElementById("email").value;
+                fetch(`/Emprestimo/carregaDadosUsuario?email=${email}`)
+                        .then(response => response.text()) // Retorna HTML
+                        .then(data => {
+                            document.getElementById("detalhesUsuario").innerHTML = data;
+                        })
+                        .catch(error => console.error("Erro ao carregar o fragmento:", error));
+            }
+            function filtrarLivros() {
+                let input = document.getElementById("searchBox").value.toLowerCase();
+                let livros = document.querySelectorAll(".list-group-item");
+
+                livros.forEach(livro => {
+                    let titulo = livro.querySelector("strong").innerText.toLowerCase();
+                    if (titulo.includes(input)) {
+                        livro.style.display = "flex"; // Mostra o livro
+                    } else {
+                        livro.style.display = "none"; // Oculta se não corresponder
+                    }
+                });
+            }
+            document.getElementById("emprestimoForm").addEventListener("submit", function (event) {
+                let livrosSelecionados = [];
+
+                document.querySelectorAll(".livro-checkbox:checked").forEach(checkbox => {
+                    livrosSelecionados.push(checkbox.getAttribute("data-id"));
+                });
+
+                // Adiciona IDs ao campo oculto antes de enviar
+                document.getElementById("livrosSelecionados").value = JSON.stringify(livrosSelecionados);
+            });
+        </script>
+    </body>
+</html>

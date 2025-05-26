@@ -6,6 +6,7 @@
 package br.edu.fesa.biblioteca.repository;
 
 import br.edu.fesa.biblioteca.cadastro.model.Livro;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,6 +17,7 @@ public interface LivroRepository extends JpaRepository<Livro, UUID> {
 
     Optional<Livro> findByTitulo(String titulo); 
     
+    List<Livro> findByQuantidadeDisponivelGreaterThan(int quantidadeMinima);
 }
 
 

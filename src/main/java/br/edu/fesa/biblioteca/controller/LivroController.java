@@ -1,7 +1,6 @@
 package br.edu.fesa.biblioteca.controller;
 
 import br.edu.fesa.biblioteca.cadastro.model.Livro;
-import br.edu.fesa.biblioteca.service.CookieService;
 import br.edu.fesa.biblioteca.service.LivroService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -33,8 +32,6 @@ public class LivroController {
     @GetMapping("/cadastro")
     public String mostrarFormularioCadastro(@RequestParam(name = "sucesso", required = false) String sucesso, Model model, HttpServletRequest request) throws UnsupportedEncodingException {
         model.addAttribute("sucesso", sucesso != null);
-        String adminCookie = CookieService.getCookie(request, "ADMIN");
-        model.addAttribute("isAdmin", "true".equals(adminCookie));
         model.addAttribute("livro", new Livro());
         return "Livro/cadastro";
     }
@@ -44,8 +41,6 @@ public class LivroController {
                                  @RequestParam("arquivoImagem") MultipartFile arquivoImagem,
                                  RedirectAttributes redirectAttributes,
                                  HttpServletRequest request) throws UnsupportedEncodingException {
-        String adminCookie = CookieService.getCookie(request, "ADMIN");
-        model.addAttribute("isAdmin", "true".equals(adminCookie));
         try {
             if (!arquivoImagem.isEmpty()) {
                 livro.setCapa(arquivoImagem.getBytes());
@@ -108,16 +103,12 @@ public class LivroController {
 
     @PostMapping("/excluir/{id}")
     public String excluir(@PathVariable UUID id, HttpServletRequest request, Model model) throws UnsupportedEncodingException {
-        String adminCookie = CookieService.getCookie(request, "ADMIN");
-        model.addAttribute("isAdmin", "true".equals(adminCookie));
         livroService.deleteById(id);
         return "redirect:/Livro/listarLivro";
     }
 
     @GetMapping("/remover/{id}")
     public String confirmarRemocao(@PathVariable UUID id, Model model, HttpServletRequest request) throws UnsupportedEncodingException {
-        String adminCookie = CookieService.getCookie(request, "ADMIN");
-        model.addAttribute("isAdmin", "true".equals(adminCookie));
 
         Livro livro = livroService.findById(id).orElseThrow(() -> new RuntimeException("Livro não encontrado"));
         model.addAttribute("livro", livro);
