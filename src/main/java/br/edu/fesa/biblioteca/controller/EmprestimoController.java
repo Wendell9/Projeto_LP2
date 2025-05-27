@@ -6,14 +6,15 @@ package br.edu.fesa.biblioteca.controller;
 
 import br.edu.fesa.biblioteca.DTO.EmprestimoDTO;
 import br.edu.fesa.biblioteca.cadastro.model.Emprestimo;
+import br.edu.fesa.biblioteca.cadastro.model.Item_Emprestimo;
 import br.edu.fesa.biblioteca.cadastro.model.Livro;
 import br.edu.fesa.biblioteca.cadastro.model.Usuario;
 import br.edu.fesa.biblioteca.repository.EmprestimoRepository;
+import br.edu.fesa.biblioteca.repository.Item_EmprestimoRespository;
 import br.edu.fesa.biblioteca.repository.LivroRepository;
 import br.edu.fesa.biblioteca.repository.UsuarioRepository;
 import java.sql.Date;
 import java.util.List;
-import java.util.UUID;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +43,12 @@ public class EmprestimoController {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
-    
-    @Autowired 
+
+    @Autowired
     private EmprestimoRepository emprestimoRepository;
+
+    @Autowired
+    private Item_EmprestimoRespository ItemEmprestimoRepository;
 
     @GetMapping("/buscarUsuario")
     @ResponseBody
@@ -76,15 +80,23 @@ public class EmprestimoController {
     public ResponseEntity<String> realizarEmprestimo(@RequestBody EmprestimoDTO emprestimoDTO) {
         Usuario usuario = usuarioRepository.findByEmail(emprestimoDTO.getEmail()).orElseThrow();
         List<Livro> livros = livroRepository.findAllById(emprestimoDTO.getLivros());
-        
+
         Emprestimo emprestimo = new Emprestimo();
-        
+
         emprestimo.setId_usuario(usuario.getId());
         emprestimo.setData_emprestimo(Date.valueOf(LocalDate.now()));
         emprestimo.setData_prevista_devolucao(Date.valueOf(LocalDate.now().plusDays(7)));
-        
+
         emprestimoRepository.save(emprestimo);
-        
+
+        for (Livro livro : livros) {
+            Item_Emprestimo itemEmprestimo = new Item_Emprestimo();
+            itemEmprestimo.setId_emprestimo(emprestimo.getId());
+            itemEmprestimo.setId_livro(livro.getId());
+            
+            ItemEmprestimoRepository.save(itemEmprestimo);
+        }
+
         return ResponseEntity.ok("Empréstimo realizado com sucesso!");
     }
 }

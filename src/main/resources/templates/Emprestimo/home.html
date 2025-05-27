@@ -18,8 +18,7 @@
             .vertical-group-centered {
                 display: flex;
                 flex-direction: column;
-                width: 70%;      /* largura de 70% */
-                margin: 0 auto;  /* centraliza horizontalmente */
+                width: 100%;      /* largura de 70% */
             }
 
             .vertical-group-centered input,
@@ -39,30 +38,51 @@
                 padding: 10px;
                 border-radius: 5px;
             }
+            .alert{
+                padding: 10px 20px; /* Adiciona espaço interno */
+                border-radius: 5px; /* Bordas arredondadas (opcional) */
+                text-align: center; /* Centraliza o texto dentro da div */
+                width:100%;
+            }
+
+            .content{
+                width: 80%;
+                height:100%;
+                margin:0 auto;
+            }
         </style>
     </head>
     <body>
         <header th:replace="navbar :: menu"></header>
 
-        <div class="vertical-group-centered mb-3">
-            <div class="input-group mb-3">
-                <input type="text" id="email" class="form-control"
-                       placeholder="Digite o email"
-                       aria-label="Recipient's email"
-                       aria-describedby="basic-addon2"
-                       onkeyup="buscarUsuario()">
-                <button class="btn btn-outline-secondary" onclick="carregarUsuario()" type="button">Buscar</button>
+        <div class="content">
+            <div class="vertical-group-centered mb-3">
+                <div class="input-group mb-3">
+                    <input type="text" id="email" class="form-control"
+                           placeholder="Digite o email"
+                           aria-label="Recipient's email"
+                           aria-describedby="basic-addon2"
+                           onkeyup="buscarUsuario()">
+                    <button class="btn btn-outline-secondary" onclick="carregarUsuario()" type="button">Buscar</button>
+                </div>
+
+                <select class="form-select" id="sugestoes" size="5" onchange="selecionarEmail(this.value)">
+                    <option value="" disabled selected>Selecione um email</option>
+                </select>
+
+            </div>
+            <div id="detalhesUsuario">
             </div>
 
-            <select class="form-select" id="sugestoes" size="5" onchange="selecionarEmail(this.value)">
-                <option value="" disabled selected>Selecione um email</option>
-            </select>
-        </div>
-        <div id="detalhesUsuario">
-        </div>
+            <div id="mensagemSucesso" class="alert alert-success mt-3" style="display: none;">
+                Livro cadastrado com sucesso!
+            </div>
+            <div id="mensagemErro" class="alert alert-danger mt-3" style="display: none;">
+                Erro ao cadastrar o livro. Tente novamente!
+            </div>
 
-        <input type="hidden" name="livrosSelecionados" id="livrosSelecionados">
-
+            <input type="hidden" name="livrosSelecionados" id="livrosSelecionados">
+        </div>
 
         <script>
             function enviarEmprestimo() {
@@ -88,10 +108,9 @@
                     body: JSON.stringify(data)
                 }).then(response => {
                     if (response.ok) {
-                        alert("Empréstimo registrado com sucesso!");
-                        window.location.href = "/Emprestimo/sucesso";
+                        document.getElementById("mensagemSucesso").style.display = "inline-block";
                     } else {
-                        alert("Erro ao registrar empréstimo.");
+                        document.getElementById("mensagemErro").style.display = "inline-block";
                     }
                 });
             }
@@ -109,20 +128,20 @@
                             return response.json();
                         })
                         .then(data => {
-                            if (data.length === 0) {
-                                select.style.display = "none"; // Oculta se não houver resultados
-                                return;
+                            select.innerHTML = '<option value="" disabled selected>Selecione um email</option>'; // Sempre mantém essa opção
+
+                            if (data.length > 0) {
+                                data.forEach(usuario => {
+                                    let option = document.createElement("option");
+                                    option.value = usuario.email;
+                                    option.innerText = usuario.email;
+                                    select.appendChild(option);
+                                });
+
+                                select.style.display = "block"; // Exibe opções quando há resultados
+                            } else {
+                                select.style.display = "block"; // Mantém visível apenas a opção padrão
                             }
-
-                            select.innerHTML = '<option value="" disabled selected>Selecione um email</option>';
-                            data.forEach(usuario => {
-                                let option = document.createElement("option");
-                                option.value = usuario.email;
-                                option.innerText = usuario.email;
-                                select.appendChild(option);
-                            });
-
-                            select.style.display = "block"; // Exibe sugestões
                         })
                         .catch(error => console.error("Erro na busca:", error));
             }
