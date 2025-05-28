@@ -28,6 +28,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     <li sec:authorize="hasRole('ADMIN')"> 
                         <a class="dropdown-item" href="/Emprestimo/home">Emprestar</a>
                     </li>
+                    <li sec:authorize="hasRole('ADMIN')"> 
+                        <a class="dropdown-item" href="/Emprestimo/listaDeEmprestimos">Lista de Emprestimos</a>
+                    </li>
                 </ul>
             </li>
         </ul>
@@ -39,7 +42,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end"> <!-- alinhado à direita -->
                     <li><a class="dropdown-item" href="/Usuario/Meu_usuario">Meu Usuário</a></li>
-                    <li><a class="dropdown-item" href="#">Empréstimos</a></li>
+                    <li><a class="dropdown-item" href="#">Meus Empréstimos</a></li>
                     <li sec:authorize="hasRole('ADMIN')">
                         <a class="dropdown-item" href="/Usuario/lista">Listar Usuários</a>
                     </li>

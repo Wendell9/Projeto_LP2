@@ -5,6 +5,7 @@
 package br.edu.fesa.biblioteca.controller;
 
 import br.edu.fesa.biblioteca.DTO.EmprestimoDTO;
+import br.edu.fesa.biblioteca.DTO.EmprestimoJoin;
 import br.edu.fesa.biblioteca.cadastro.model.Emprestimo;
 import br.edu.fesa.biblioteca.cadastro.model.Item_Emprestimo;
 import br.edu.fesa.biblioteca.cadastro.model.Livro;
@@ -76,6 +77,13 @@ public class EmprestimoController {
         return "Emprestimo/detalhesUsuario :: detalhesUsuario"; // Retorna apenas o trecho necessário
     }
 
+    @GetMapping("/listaDeEmprestimos")
+    public String listarEmprestimosGeral() {
+        List<EmprestimoJoin> listaDeEmprestimos = emprestimoRepository.ListarEmprestimosDetalhados();
+        
+        return "Emprestimo/listaGeralEmprestimo";
+    }
+
     @PostMapping("/realizar")
     public ResponseEntity<String> realizarEmprestimo(@RequestBody EmprestimoDTO emprestimoDTO) {
         Usuario usuario = usuarioRepository.findByEmail(emprestimoDTO.getEmail()).orElseThrow();
@@ -93,7 +101,7 @@ public class EmprestimoController {
             Item_Emprestimo itemEmprestimo = new Item_Emprestimo();
             itemEmprestimo.setId_emprestimo(emprestimo.getId());
             itemEmprestimo.setId_livro(livro.getId());
-            
+
             ItemEmprestimoRepository.save(itemEmprestimo);
         }
 
