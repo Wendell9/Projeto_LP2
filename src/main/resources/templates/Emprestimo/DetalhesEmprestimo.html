@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Lista de Emprestimos</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <style>
+            body {
+                padding-top: 70px;
+            }
+            .capa-thumbnail {
+                width: 60px;
+                height: 80px;
+                object-fit: cover;
+                border-radius: 4px;
+            }
+        </style>
+    </head>
+    <body>
+        <header th:replace="navbar :: menu"></header>
+
+        <div class="container">
+            <h1 class="mt-4">Lista de Emprestimos</h1>
+
+            <div class="table-responsive">
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Email</th>
+                            <th>Data Empréstimo</th>
+                            <th>Data Prevista Devolução</th>
+                            <th colspan="2">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    <td th:text="${emprestimo.id}"></td>
+
+                    <td th:text="${emprestimo.email}"></td>
+                    <td th:text="${emprestimo.data_emprestimo}"></td>
+                    <td th:text="${emprestimo.data_prevista_devolucao}"></td>
+                    <td th:text="${emprestimo.status}"></td>
+                    </tbody>
+                </table>  
+
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Capa</th>
+                            <th>Título</th>
+                            <th>Autor</th>
+                            <th>Editora</th>
+                            <th>ISBN</th>
+                            <th>Ano</th>
+                            <th>Categoria</th>
+                        </tr>
+                    </thead>
+
+                    <tr th:each="livro : ${livros}">
+                        <td>
+                            <img th:src="'data:image/jpeg;base64,' + ${livro.CapaEmbase64}" alt="Capa" class="capa-thumbnail" />
+                        </td>
+                        <td th:text="${livro.titulo}"></td>
+                        <td th:text="${livro.autor}"></td>
+                        <td th:text="${livro.editora}"></td>
+                        <td th:text="${livro.isbn}"></td>
+                        <td th:text="${livro.anoPublicacao}"></td>
+                        <td th:text="${livro.categoria}"></td>
+                    </tr>
+                </table>
+                <div class="mt-4">
+                    <a th:href="@{/Emprestimo/Devolver/{id} (id=${emprestimo.id})}" class="btn btn-primary">Devolver</a>
+                    <a href="/Emprestimo/listaDeEmprestimos" class="btn btn-secondary">Voltar</a>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

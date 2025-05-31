@@ -1,15 +1,48 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
--->
-<html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Lista de Emprestimos</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <style>
+            body {
+                padding-top: 70px;
+            }
+        </style>
     </head>
     <body>
-        <div>TODO write content</div>
+        <header th:replace="navbar :: menu"></header>
+
+        <div class="container">
+            <h1 class="mt-4">Lista de Emprestimos</h1>
+
+            <div class="table-responsive">
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Email</th>
+                            <th>Data Empréstimo</th>
+                            <th>Data Prevista Devolução</th>
+                            <th colspan="2">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="emprestimo : ${listaEmprestimos}">
+                            <td>
+                                <a th:href="@{/Emprestimo/detalhes/{id}(id=${emprestimo.id})}" th:text="${emprestimo.id}"></a>
+                            </td>
+                            <td th:text="${emprestimo.email}"></td>
+                            <td th:text="${emprestimo.data_emprestimo}"></td>
+                            <td th:text="${emprestimo.data_prevista_devolucao}"></td>
+                            <td th:text="${emprestimo.status}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

@@ -9,6 +9,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.util.Date;
 import java.util.UUID;
@@ -20,24 +22,25 @@ import java.util.UUID;
 @Entity
 @Table(name = "EMPRESTIMO", schema = "SISTEMA")
 public class Emprestimo {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
-    
-    @Column(length = 100)
-    private UUID id_usuario;
-    
+
+    @ManyToOne
+    @JoinColumn(name = "id_usuario")  // coluna na tabela "emprestimo"
+    private Usuario usuario;
+
     @Column
     private Date data_emprestimo;
-    
+
     @Column
     private Date data_prevista_devolucao;
-    
+
     @Column
     private Date data_devolucao;
-    
+
     @Column
     private String status;
 
@@ -47,14 +50,6 @@ public class Emprestimo {
 
     public void setId(UUID id) {
         this.id = id;
-    }
-
-    public UUID getId_usuario() {
-        return id_usuario;
-    }
-
-    public void setId_usuario(UUID id_usuario) {
-        this.id_usuario = id_usuario;
     }
 
     public Date getData_emprestimo() {
@@ -88,6 +83,14 @@ public class Emprestimo {
     public void setStatus(String status) {
         this.status = status;
     }
-    
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
     
 }

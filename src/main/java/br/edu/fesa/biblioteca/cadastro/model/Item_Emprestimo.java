@@ -9,6 +9,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.util.UUID;
 
@@ -16,20 +18,22 @@ import java.util.UUID;
  *
  * @author guind
  */
-
 @Entity
 @Table(name = "ITEM_EMPRESTIMO", schema = "SISTEMA")
 public class Item_Emprestimo {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
-    
-    @Column
-    private UUID id_emprestimo;
-    
-    @Column 
-    private UUID id_livro;
+
+    @ManyToOne
+    @JoinColumn(name = "id_emprestimo") // este nome deve bater com o banco de dados
+    private Emprestimo emprestimo;
+
+    @ManyToOne
+    @JoinColumn(name = "id_livro")
+    private Livro livro;
 
     public UUID getId() {
         return id;
@@ -39,21 +43,21 @@ public class Item_Emprestimo {
         this.id = id;
     }
 
-    public UUID getId_emprestimo() {
-        return id_emprestimo;
+    public Emprestimo getEmprestimo() {
+        return emprestimo;
     }
 
-    public void setId_emprestimo(UUID id_emprestimo) {
-        this.id_emprestimo = id_emprestimo;
+    public void setEmprestimo(Emprestimo emprestimo) {
+        this.emprestimo = emprestimo;
     }
 
-    public UUID getId_livro() {
-        return id_livro;
+
+    public Livro getLivro() {
+        return livro;
     }
 
-    public void setId_livro(UUID id_livro) {
-        this.id_livro = id_livro;
+    public void setLivro(Livro livro) {
+        this.livro = livro;
     }
-    
-    
+
 }

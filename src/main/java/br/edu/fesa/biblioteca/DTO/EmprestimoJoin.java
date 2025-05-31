@@ -4,7 +4,7 @@
  */
 package br.edu.fesa.biblioteca.DTO;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -16,22 +16,13 @@ public class EmprestimoJoin {
     
     private String email;
     
-    private Date Data_Emprestimo;
+    private Date data_emprestimo;
     
-    private Date Data_Prevista_Devolucao;
+    private Date data_prevista_devolucao;
     
-    private Date Data_Devolucao;
+    private Date data_devolucao;
     
     private String status;
-
-    public EmprestimoJoin(UUID id, String email, Date Data_Emprestimo, Date Data_Prevista_Devolucao, Date Data_Devolucao, String status) {
-        this.id = id;
-        this.email = email;
-        this.Data_Emprestimo = Data_Emprestimo;
-        this.Data_Prevista_Devolucao = Data_Prevista_Devolucao;
-        this.Data_Devolucao = Data_Devolucao;
-        this.status = status;
-    }
 
     public UUID getId() {
         return id;
@@ -49,28 +40,28 @@ public class EmprestimoJoin {
         this.email = email;
     }
 
-    public Date getData_Emprestimo() {
-        return Data_Emprestimo;
+    public Date getData_emprestimo() {
+        return data_emprestimo;
     }
 
-    public void setData_Emprestimo(Date Data_Emprestimo) {
-        this.Data_Emprestimo = Data_Emprestimo;
+    public void setData_emprestimo(Date data_emprestimo) {
+        this.data_emprestimo = data_emprestimo;
     }
 
-    public Date getData_Prevista_Devolucao() {
-        return Data_Prevista_Devolucao;
+    public Date getData_prevista_devolucao() {
+        return data_prevista_devolucao;
     }
 
-    public void setData_Prevista_Devolucao(Date Data_Prevista_Devolucao) {
-        this.Data_Prevista_Devolucao = Data_Prevista_Devolucao;
+    public void setData_prevista_devolucao(Date data_prevista_devolucao) {
+        this.data_prevista_devolucao = data_prevista_devolucao;
     }
 
-    public Date getData_Devolucao() {
-        return Data_Devolucao;
+    public Date getData_devolucao() {
+        return data_devolucao;
     }
 
-    public void setData_Devolucao(Date Data_Devolucao) {
-        this.Data_Devolucao = Data_Devolucao;
+    public void setData_devolucao(Date data_devolucao) {
+        this.data_devolucao = data_devolucao;
     }
 
     public String getStatus() {
@@ -80,6 +71,14 @@ public class EmprestimoJoin {
     public void setStatus(String status) {
         this.status = status;
     }
-    
-    
+
+    public EmprestimoJoin(UUID id, String email, Date data_emprestimo, Date data_prevista_devolucao, Date data_devolucao, String status) {
+        this.id = id;
+        this.email = email;
+        this.data_emprestimo = data_emprestimo;
+        this.data_prevista_devolucao = data_prevista_devolucao;
+        this.data_devolucao = data_devolucao;
+        this.status = status;
+    }
+
 }
