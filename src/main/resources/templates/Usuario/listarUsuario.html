@@ -25,6 +25,7 @@
                         <th>Nome</th>
                         <th>Email</th>
                         <th>Telefone</th>
+                        <th>Administrador</th>
                         <th colspan="2">Ações</th>
                     </tr>
                 </thead>
@@ -33,6 +34,7 @@
                         <td th:text="${usuario.nome}"></td>
                         <td th:text="${usuario.email}"></td>
                         <td th:text="${usuario.telefone}"></td>
+                        <td th:text="${usuario.admin} ? 'Sim' : 'Não'"></td>
                         <td>
                             <a th:href="@{/Usuario/editar/{id}(id=${usuario.id})}" class="btn btn-warning btn-sm">Editar</a>
                         </td>

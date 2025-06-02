@@ -32,7 +32,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import br.edu.fesa.biblioteca.repository.Item_EmprestimoRepository;
+import br.edu.fesa.biblioteca.service.EmprestimoService;
 import java.util.ArrayList;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  *
@@ -51,6 +54,9 @@ public class EmprestimoController {
 
     @Autowired
     private EmprestimoRepository emprestimoRepository;
+
+    @Autowired
+    EmprestimoService emprestimoService;
 
     @Autowired
     private Item_EmprestimoRepository ItemEmprestimoRepository;
@@ -100,22 +106,31 @@ public class EmprestimoController {
             l.setCapaEmbase64();
             livros.add(l);
         }
-        
-                
-        model.addAttribute("livros",livros);
-        model.addAttribute("emprestimo",emprestimo);
-        
+
+        model.addAttribute("livros", livros);
+        model.addAttribute("emprestimo", emprestimo);
+
         return "Emprestimo/DetalhesEmprestimo";
 
     }
-    
+
+    @GetMapping("/AtualizarStatus")
+    public String AtualizarStatus() {
+        emprestimoService.atualizarLivrosAtrasados();
+        return "redirect:/Emprestimo/listaDeEmprestimos";
+    }
+
     @GetMapping("/Devolver/{id}")
-    public String devolverLivro(@PathVariable UUID id)
-    {
+    public String devolverLivro(@PathVariable UUID id, Model model, RedirectAttributes redirectAttributes) {
         Emprestimo emprestimoAlterado = emprestimoRepository.findById(id).orElse(null);
+        if (emprestimoAlterado.getStatus().equals("Devolvido")) {
+            redirectAttributes.addFlashAttribute("erro", "Não é possível devolver um livro que ja foi devolvido");
+            return "redirect:/Emprestimo/listaDeEmprestimos";
+        }
+
         emprestimoAlterado.setStatus("Devolvido");
         emprestimoRepository.save(emprestimoAlterado);
-        
+
         List<Item_Emprestimo> itens;
         itens = ItemEmprestimoRepository.findItensComLivroPorEmprestimoId(id);
         for (Item_Emprestimo item : itens) {
@@ -123,12 +138,28 @@ public class EmprestimoController {
             livroRepository.aumentarQuantidadeDisponivel(l.getId());
         }
         
+        Usuario usuario = usuarioRepository.findById(emprestimoAlterado.getUsuario().getId()).orElse(null);
+        
+        if(usuario !=null){
+            if(!usuario.getStatus()){
+                usuario.setStatus(true);
+                usuarioRepository.save(usuario);
+            }
+        }
+
         return "redirect:/Emprestimo/listaDeEmprestimos";
     }
 
     @PostMapping("/realizar")
-    public ResponseEntity<String> realizarEmprestimo(@RequestBody EmprestimoDTO emprestimoDTO) {
+    public ResponseEntity<String> realizarEmprestimo(@RequestBody EmprestimoDTO emprestimoDTO, Model model, RedirectAttributes redirectAttributes) {
         Usuario usuario = usuarioRepository.findByEmail(emprestimoDTO.getEmail()).orElseThrow();
+
+        if (!usuario.getStatus()) {
+            return ResponseEntity
+        .status(HttpStatus.FORBIDDEN)
+        .body("Usuário bloqueado. Favor devolver os empréstimos em atraso!");
+        }
+
         List<Livro> livros = livroRepository.findAllById(emprestimoDTO.getLivros());
 
         Emprestimo emprestimo = new Emprestimo();

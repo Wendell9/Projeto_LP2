@@ -40,8 +40,8 @@ public class Usuario implements Serializable {
     @Column(length = 20)
     private String telefone;
 
-    @Column(length = 20)
-    private String status;
+    @Column(columnDefinition = "boolean default true")
+    private boolean status;
 
     @Column(length = 20)
     private String tipo_imagem;
@@ -85,11 +85,11 @@ public class Usuario implements Serializable {
         this.telefone = telefone;
     }
 
-    public String getStatus() {
+    public boolean getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(boolean status) {
         this.status = status;
     }
 

@@ -8,6 +8,7 @@
         <style>
             body {
                 font-family: Arial, sans-serif;
+                margin:0 20%;
             }
             h1 {
                 font-size: 2.0rem;
@@ -29,10 +30,14 @@
         <div class="container mt-5 pt-5">
             <h1>Confirmar Exclusão</h1>
             <p>Tem certeza de que deseja excluir o <span th:text="${usuario.nome}">Nome do Padrão</span>?</p>
-            <form action="#" th:action="@{/Usuario/excluir/{id}(id=${usuario.id})}" method="post">
+            <form th:action="@{/Usuario/excluir/{id}(id=${usuario.id})}" method="post">
                 <button type="submit" class="btn btn-danger">Excluir</button>
-                <a href="#" th:href="@{/hotelaria-fesa/padrao/listar}" class="btn btn-secondary">Cancelar</a>
+                <a th:href="@{/Usuario/lista}" class="btn btn-secondary">Cancelar</a>
             </form>
         </div>
+        <div th:if="${erro}" class="alert alert-danger mt-3" role="alert">
+            <p th:text="${erro}"></p>
+        </div>
+
     </body>
 </html>

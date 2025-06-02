@@ -1,48 +1,341 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <title>Login - Biblioteca</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8">
+        <title>Login - Biblioteca</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" rel="stylesheet">
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+        <style>
+            /* Smartphones pequenos (até 480px) */
+            /* Smartphones pequenos (até 480px) */
+            @media (max-width: 480px) {
+                nav form.d-flex {
+                    flex-direction: column;
+                    gap: 1rem;
+                    width: 100%;
+                    max-width: 320px;
+                    margin: 1rem auto 1.5rem auto;
+                    padding: 1.25rem;
+                    background-color: #fff;
+                    border-radius: 12px;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                }
 
-  <nav class="navbar navbar-dark bg-dark px-3">
-    <a class="navbar-brand" href="#">Biblioteca</a>
-    
-    <ul class="nav nav-pills nav-fill">
-      <li class="nav-item">
-        <a class="nav-link active" href="/biblioteca-fesa/home">Home</a>
-      </li>
-    </ul>
+                nav form.d-flex input[type="text"],
+                nav form.d-flex input[type="password"] {
+                    width: 100%;
+                    font-size: 1.1rem;
+                    padding: 1.25rem 0.85rem;  /* Aumenta altura vertical */
+                }
 
-    <form class="d-flex ms-auto" th:object="${usuario}" method="POST" th:action="@{/biblioteca-fesa/login}">
-      <input class="form-control me-2" th:field="*{email}" type="text" name="username" placeholder="Usuário" required>
-      <input class="form-control me-2" th:field="*{senha}" type="password" name="password" placeholder="Senha" required>
-      <button class="btn btn-outline-light" type="submit">Entrar</button>
-       <a href="/Usuario/cadastro" class="btn btn-primary align-self-center ms-2">
-      Cadastrar
-    </a>
-  </nav>
+                nav form.d-flex button,
+                nav form.d-flex a {
+                    width: 100%;
+                    font-size: 1.1rem;
+                    padding: 0.85rem;
+                }
 
-    <!-- Exibe erro se existir -->
-<div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
-  <p th:text="${erro}"></p>
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-</div>
+                nav form.d-flex button.btn {
+                    font-weight: 700;
+                }
 
-<div th:if="${param.error}">
-    <p class="text-danger">E-mail ou senha inválidos.</p>
-</div>
-    
-  <div class="container mt-5">
-    <h2>Bem-vindo à Biblioteca Virtual</h2>
-    <p>Acesse o sistema usando seu usuário e senha.</p>
-  </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+                .carousel-item img {
+                    max-height: 30vh;
+                    object-fit: cover;
+                }
+
+                .container.mt-5 h2,
+                .container.mt-5 p {
+                    font-size: 0.9rem;
+                    padding: 0 1rem;
+                    text-align: center;
+                }
+
+                footer .row > div {
+                    text-align: center;
+                    margin-bottom: 1rem;
+                }
+
+                footer section.d-flex {
+                    flex-direction: column;
+                    align-items: center;
+                    text-align: center;
+                    gap: 0.5rem;
+                }
+            }
+
+            /* Tablets (481px a 768px) */
+            @media (min-width: 481px) and (max-width: 768px) {
+                nav form.d-flex {
+                    flex-direction: column;
+                    gap: 0.85rem;
+                    width: 100%;
+                    max-width: 400px;
+                    margin: 1.25rem auto 2rem auto;
+                    padding: 1.25rem 1.5rem;
+                    background-color: #fff;
+                    border-radius: 10px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                }
+
+                nav form.d-flex input[type="text"],
+                nav form.d-flex input[type="password"] {
+                    width: 100%;
+                    font-size: 1rem;
+                    padding: 1.25rem 0.75rem; /* Aumenta altura vertical */
+                }
+
+                nav form.d-flex button,
+                nav form.d-flex a {
+                    width: 100%;
+                    font-size: 1rem;
+                    padding: 0.75rem;
+                }
+
+                nav form.d-flex button.btn {
+                    font-weight: 700;
+                }
+
+                .carousel-item img {
+                    max-height: 40vh;
+                    object-fit: cover;
+                }
+
+                .container.mt-5 h2,
+                .container.mt-5 p {
+                    font-size: 1rem;
+                    padding: 0 1rem;
+                    text-align: center;
+                }
+
+                footer .row > div {
+                    text-align: center;
+                    margin-bottom: 1rem;
+                }
+
+                footer section.d-flex {
+                    flex-direction: column;
+                    align-items: center;
+                    text-align: center;
+                    gap: 0.5rem;
+                }
+            }
+
+            /* Telas médias (769px a 992px) */
+            @media (min-width: 769px) and (max-width: 992px) {
+                nav form.d-flex {
+                    flex-direction: row;
+                    gap: 0.5rem;
+                    width: auto;
+                    max-width: none;
+                    margin: 0;
+                    padding: 0;
+                    background-color: transparent;
+                    box-shadow: none;
+                    border-radius: 0;
+                }
+
+                nav form.d-flex input[type="text"],
+                nav form.d-flex input[type="password"] {
+                    width: auto;
+                    font-size: 1rem;
+                    padding: 1.25rem 1rem; /* Aumenta altura vertical */
+                }
+
+                nav form.d-flex button,
+                nav form.d-flex a {
+                    width: auto;
+                    font-size: 1rem;
+                    padding: 0.5rem 1rem;
+                }
+
+                nav form.d-flex button.btn {
+                    font-weight: 600;
+                }
+
+                .carousel-item img {
+                    max-height: 60vh;
+                    object-fit: contain;
+                }
+
+                .container.mt-5 h2,
+                .container.mt-5 p {
+                    font-size: 1.25rem;
+                    padding: 0;
+                    text-align: left;
+                }
+
+                footer .row > div {
+                    text-align: left;
+                    margin-bottom: 0;
+                }
+
+                footer section.d-flex {
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: flex-start;
+                    text-align: left;
+                    gap: 1rem;
+                }
+            }
+
+
+            .carousel-item img {
+                max-height: 70vh;
+                width: 100%;
+                object-fit: contain;
+            }
+
+            .carousel-control-prev-icon {
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='black' viewBox='0 0 16 16'%3E%3Cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L6.707 7l4.647 4.646a.5.5 0 0 1-.708.708l-5-5a.5.5 0 0 1 0-.708l5-5a.5.5 0 0 1 .708 0z'/%3E%3C/svg%3E");
+            }
+
+            .carousel-control-next-icon {
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='black' viewBox='0 0 16 16'%3E%3Cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l5 5a.5.5 0 0 1 0 .708l-5 5a.5.5 0 1 1-.708-.708L9.293 7 4.646 2.354a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+            }
+
+            .carousel-indicators button {
+                background-color: black;
+            }
+
+            .container {
+                text-align: center;
+            }
+
+        </style>
+
+    </head>
+    <body>
+        <nav class="navbar navbar-dark bg-dark px-3">
+            <a class="navbar-brand" href="#">Biblioteca</a>
+            <ul class="nav nav-pills nav-fill">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/biblioteca-fesa/home">Home</a>
+                </li>
+            </ul>
+            <form class="d-flex ms-auto" th:object="${usuario}" method="POST" th:action="@{/biblioteca-fesa/login}">
+                <input class="form-control me-2" th:field="*{email}" type="text" name="username" placeholder="Usuário" required>
+                <input class="form-control me-2" th:field="*{senha}" type="password" name="password" placeholder="Senha" required>
+                <button class="btn btn-outline-light" type="submit">Entrar</button>
+                <a href="/Usuario/cadastro" class="btn btn-primary align-self-center ms-2">Cadastrar</a>
+            </form>
+        </nav>
+
+        <div th:if="${erro}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <p th:text="${erro}"></p>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+        </div>
+
+        <div th:if="${param.error}">
+            <p class="text-danger">E-mail ou senha inválidos.</p>
+        </div>
+
+        <div class="container mt-5">
+            <h2>Bem-vindo à Biblioteca Virtual</h2>
+            <p>Acesse o sistema usando seu usuário e senha.</p>
+        </div>
+
+        <div id="carouselExampleIndicators" class="carousel slide mb-3" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="/images/Banner1.png" class="d-block w-100" alt="Banner 1">
+                </div>
+                <div class="carousel-item">
+                    <img src="/images/Banner2.jpg" class="d-block w-100" alt="Banner 2">
+                </div>
+                <div class="carousel-item">
+                    <img src="/images/Banner3.webp" class="d-block w-100" alt="Banner 3">
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Anterior</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Próximo</span>
+            </button>
+        </div>
+        <!-- Footer -->
+        <footer class="text-center text-lg-start bg-dark text-light">
+            <!-- Section: Social media -->
+            <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
+
+                <div class="me-5 d-none d-lg-block">
+                    <span>Se conecte conosco por meio de nossas redes sociais:</span>
+                </div>
+
+                <!-- Right -->
+                <div>
+                    <a href="" class="me-4 text-reset">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="" class="me-4 text-reset">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="" class="me-4 text-reset">
+                        <i class="fab fa-google"></i>
+                    </a>
+                    <a href="" class="me-4 text-reset">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="" class="me-4 text-reset">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="" class="me-4 text-reset">
+                        <i class="fab fa-github"></i>
+                    </a>
+                </div>
+                <!-- Right -->
+            </section>
+            <!-- Section: Social media -->
+
+            <!-- Section: Links  -->
+            <section class="">
+                <div class="container text-center text-md-start mt-5">
+                    <!-- Grid row -->
+                    <div class="row mt-3">
+                        <!-- Grid column -->
+                        <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+                            <!-- Content -->
+                            <h6 class="text-uppercase fw-bold mb-4">
+                                <i class="fas fa-gem me-3"></i>Bibloteca-Fesa
+                            </h6>
+                            <p>
+                                Disponibilizamos um acervo diversificado de livros, periódicos e materiais digitais para apoiar a pesquisa, o aprendizado e o desenvolvimento intelectual. Nossa missão é promover o acesso à informação e incentivar o hábito da leitura entre todos os públicos.
+                            </p>
+                        </div>
+                        <!-- Grid column -->
+                        <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+                            <!-- Links -->
+                            <h6 class="text-uppercase fw-bold mb-4">Contatos</h6>
+                            <p><i class="fas fa-home me-3"></i> São Bernardo do Campo, SP, BR</p>
+                            <p>
+                                <i class="fas fa-envelope me-3"></i>
+                                bibliotecafesa@gmail.com
+                            </p>
+                            <p><i class="fas fa-phone me-3"></i> + 55 11 99999 2222</p>
+                        </div>
+                        <!-- Grid column -->
+                    </div>
+                    <!-- Grid row -->
+                </div>
+            </section>
+            <!-- Section: Links  -->
+
+            <!-- Copyright -->
+            <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
+                © 2025 Copyright: Biblioteca-Fesa
+            </div>
+            <!-- Copyright -->
+        </footer>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
 </html>

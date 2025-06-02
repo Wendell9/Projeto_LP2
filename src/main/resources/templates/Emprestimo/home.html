@@ -74,11 +74,10 @@
             <div id="detalhesUsuario">
             </div>
 
-            <div id="mensagemSucesso" class="alert alert-success mt-3" style="display: none;">
-                Livro cadastrado com sucesso!
-            </div>
             <div id="mensagemErro" class="alert alert-danger mt-3" style="display: none;">
-                Erro ao cadastrar o livro. Tente novamente!
+            </div>
+
+            <div id="mensagemSucesso" class="alert alert-success mt-3" style="display: none;">
             </div>
 
             <input type="hidden" name="livrosSelecionados" id="livrosSelecionados">
@@ -90,12 +89,9 @@
                 const checkboxesMarcados = document.querySelectorAll('.list-group-item input[type="checkbox"]:checked');
 
                 // Extrai os data-id dos checkboxes marcados
-                const idsSelecionados = Array.from(checkboxesMarcados).map(checkbox => {
+                checkboxesMarcados.forEach(checkbox => {
                     livrosSelecionados.push(checkbox.getAttribute('data-id'));
                 });
-
-                // Exibe os IDs no console (ou pode enviar para o backend via AJAX)
-                console.log("IDs selecionados:", idsSelecionados);
 
                 let data = {
                     email: document.getElementById("email").value,
@@ -106,14 +102,21 @@
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify(data)
-                }).then(response => {
-                    if (response.ok) {
-                        document.getElementById("mensagemSucesso").style.display = "inline-block";
-                    } else {
-                        document.getElementById("mensagemErro").style.display = "inline-block";
-                    }
-                });
+                })
+                        .then(response => response.text().then(texto => {
+                                if (response.ok) {
+                                    const sucesso = document.getElementById("mensagemSucesso");
+                                    sucesso.innerText = texto;
+                                    sucesso.style.display = "inline-block";
+                                } else {
+                                    const erro = document.getElementById("mensagemErro");
+                                    erro.innerText = texto;
+                                    erro.style.display = "inline-block";
+                                }
+                            }));
             }
+
+
 
 
             function buscarUsuario() {
@@ -189,5 +192,6 @@
                 document.getElementById("livrosSelecionados").value = JSON.stringify(livrosSelecionados);
             });
         </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

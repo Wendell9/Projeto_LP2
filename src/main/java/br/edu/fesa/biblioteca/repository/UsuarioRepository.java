@@ -21,4 +21,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, UUID> {
     public Usuario login(String email);
     
     List<Usuario> findByEmailContaining(String email);
+    
+     long countByAdminTrue();
 }

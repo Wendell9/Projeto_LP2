@@ -2316,3 +2316,9 @@ SELECT * FROM sistema.item_emprestimo WHERE id_emprestimo = "1fdfe0df-6e83-4da9-
 	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:658)
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
 	at java.base/java.lang.Thread.run(Thread.java:833)
+2025-06-01 23:02:45.369683-03:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "EUSUARIO" not found; SQL statement:
+select * from eusuario [42102-232]
+2025-06-01 23:08:28.614416-03:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "EMPRESIMO" not found; SQL statement:
+select * from empresimo [42102-232]
