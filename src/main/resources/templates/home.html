@@ -10,10 +10,77 @@
             body {
                 padding-top: 70px; /* para compensar a navbar fixa */
             }
+
+            .capa-thumbnail {
+                width: 60px;
+                height: 80px;
+                object-fit: cover;
+                border-radius: 4px;
+            }
+
+            /* Definindo um limite para a lista de livros */
+            .table-container {
+                max-height: 400px;
+                overflow-y: auto;
+            }
         </style>
     </head>
     <body>
         <header th:replace="navbar :: menu"></header>
+
+        <div class="container">
+            <h1 class="mt-4">Lista de Livros</h1>
+
+            <!-- Campo de pesquisa para filtrar os livros -->
+            <input type="text" id="filtroLivro" class="form-control mb-3" placeholder="Digite para filtrar os livros..." />
+
+            <div class="table-container table-responsive">
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Capa</th>
+                            <th>Título</th>
+                            <th>Autor</th>
+                            <th>Editora</th>
+                            <th>ISBN</th>
+                            <th>Ano</th>
+                            <th>Categoria</th>
+                            <th>Total</th>
+                            <th>Disponível</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaLivros">
+                        <tr th:each="livro : ${livros}">
+                            <td>
+                                <img th:src="'data:image/jpeg;base64,' + ${livro.CapaEmbase64}" alt="Capa" class="capa-thumbnail" />
+                            </td>
+                            <td>
+                                <a th:href="@{/home/detalhes/{id}(id=${livro.id})}" th:text="${livro.titulo}"></a>
+                            </td>
+                            <td th:text="${livro.autor}"></td>
+                            <td th:text="${livro.editora}"></td>
+                            <td th:text="${livro.isbn}"></td>
+                            <td th:text="${livro.anoPublicacao}"></td>
+                            <td th:text="${livro.categoria}"></td>
+                            <td th:text="${livro.quantidadeTotal}"></td>
+                            <td th:text="${livro.quantidadeDisponivel}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            document.getElementById("filtroLivro").addEventListener("keyup", function() {
+                let filtro = this.value.toLowerCase();
+                let linhas = document.getElementById("listaLivros").getElementsByTagName("tr");
+
+                for (let linha of linhas) {
+                    let titulo = linha.getElementsByTagName("td")[1].innerText.toLowerCase();
+                    linha.style.display = titulo.includes(filtro) ? "" : "none";
+                }
+            });
+        </script>
     </body>
 </html>

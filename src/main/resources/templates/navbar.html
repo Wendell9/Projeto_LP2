@@ -13,7 +13,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 <a class="nav-link active" aria-current="page" href="/home">Home</a>
             </li>
         </ul>
-        <ul class="nav nav-pills me-auto">
+        <ul class="nav nav-pills me-auto" sec:authorize="hasRole('ADMIN')">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Livros
@@ -42,7 +42,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end"> <!-- alinhado à direita -->
                     <li><a class="dropdown-item" href="/Usuario/Meu_usuario">Meu Usuário</a></li>
-                    <li><a class="dropdown-item" href="#">Meus Empréstimos</a></li>
+                    <li><a class="dropdown-item" href="/Emprestimo/MeusEmprestimos">Meus Empréstimos</a></li>
                     <li sec:authorize="hasRole('ADMIN')">
                         <a class="dropdown-item" href="/Usuario/lista">Listar Usuários</a>
                     </li>

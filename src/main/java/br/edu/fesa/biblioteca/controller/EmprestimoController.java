@@ -33,6 +33,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import br.edu.fesa.biblioteca.repository.Item_EmprestimoRepository;
 import br.edu.fesa.biblioteca.service.EmprestimoService;
+import br.edu.fesa.biblioteca.service.UsuarioService;
+import jakarta.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -57,6 +60,9 @@ public class EmprestimoController {
 
     @Autowired
     EmprestimoService emprestimoService;
+
+    @Autowired
+    UsuarioService usuarioService;
 
     @Autowired
     private Item_EmprestimoRepository ItemEmprestimoRepository;
@@ -114,10 +120,48 @@ public class EmprestimoController {
 
     }
 
+    @PreAuthorize("hasRole('USER')") 
+    @GetMapping("/MeusDetalhesEmprestimo/{id}")
+    public String MeusDetalhesEmprestimo(@PathVariable UUID id, Model model) {
+        EmprestimoJoin emprestimo = emprestimoRepository.emprestimoDetalhado(id);
+        List<Item_Emprestimo> itens;
+        List<Livro> livros = new ArrayList<>();
+        itens = ItemEmprestimoRepository.findItensComLivroPorEmprestimoId(id);
+        for (Item_Emprestimo item : itens) {
+            Livro l = item.getLivro();
+            l.setCapaEmbase64();
+            livros.add(l);
+        }
+
+        model.addAttribute("livros", livros);
+        model.addAttribute("emprestimo", emprestimo);
+
+        return "Emprestimo/DetalhesEmprestimo";
+
+    }
+
     @GetMapping("/AtualizarStatus")
     public String AtualizarStatus() {
         emprestimoService.atualizarLivrosAtrasados();
         return "redirect:/Emprestimo/listaDeEmprestimos";
+    }
+
+    @PreAuthorize("hasRole('USER')") 
+    @GetMapping("/MeusEmprestimos")
+    public String MeusEmprestimos(HttpServletRequest request, RedirectAttributes redirectAttributes, Model model) throws UnsupportedEncodingException {
+        try {
+
+            String usuarioId = (String) request.getSession(false).getAttribute("usuarioId");
+            UUID uuid = UUID.fromString(usuarioId);
+
+            List<EmprestimoJoin> listaDeEmprestimos = emprestimoRepository.listarMeusEmprestimos(uuid);
+
+            model.addAttribute("listaEmprestimos", listaDeEmprestimos);
+            return "Emprestimo/MeusEmprestimos";
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("erro", "ID de usuário inválido");
+            return "redirect:/biblioteca-fesa";
+        }
     }
 
     @GetMapping("/Devolver/{id}")
@@ -137,11 +181,11 @@ public class EmprestimoController {
             Livro l = item.getLivro();
             livroRepository.aumentarQuantidadeDisponivel(l.getId());
         }
-        
+
         Usuario usuario = usuarioRepository.findById(emprestimoAlterado.getUsuario().getId()).orElse(null);
-        
-        if(usuario !=null){
-            if(!usuario.getStatus()){
+
+        if (usuario != null) {
+            if (!usuario.getStatus()) {
                 usuario.setStatus(true);
                 usuarioRepository.save(usuario);
             }
@@ -156,8 +200,8 @@ public class EmprestimoController {
 
         if (!usuario.getStatus()) {
             return ResponseEntity
-        .status(HttpStatus.FORBIDDEN)
-        .body("Usuário bloqueado. Favor devolver os empréstimos em atraso!");
+                    .status(HttpStatus.FORBIDDEN)
+                    .body("Usuário bloqueado. Favor devolver os empréstimos em atraso!");
         }
 
         List<Livro> livros = livroRepository.findAllById(emprestimoDTO.getLivros());
