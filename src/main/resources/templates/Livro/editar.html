@@ -4,23 +4,69 @@
         <meta charset="UTF-8">
         <title>Editar Livro</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
         <style>
             body {
-                font-family: Arial, sans-serif;
+                font-family: 'Permanent Marker', cursive;
+                background-color: #037a4c;
+                color:lightblue;
+                font-weight: 400;
+                padding-top: 70px;
+                padding-bottom: 70px;
             }
-            h1 {
-                font-size: 1.5rem;
-                color: #333;
-                font-family: 'Roboto', sans-serif;
-                font-weight: 300;
-                border-bottom: 1px solid #ddd;
-                padding-bottom: 10px;
-                margin-bottom: 20px;
+            h1, h2, h3, .navbar-brand {
+                font-family: 'Permanent Marker', cursive;
+                font-weight: 200;
+                color: lightblue;
+            }
+            .navbar {
+                background-color: #6d4c41;
+            }
+            .navbar a,
+            .navbar .nav-link,
+            .navbar-brand {
+                color: #fff ;
+            }
+            .navbar .btn-outline-light {
+                border-color: #fff;
+                color: #fff;
+            }
+            .nav-pills .nav-link.active{
+                background-color:#8d6e63;
+                color: #fff;
+                border-color:#8d6e63
+            }
+            .nav-pills .nav-link.active:hover{
+                background-color: #6d4c41;
+                border-color: #5d4037;
+                color:#000
+            }
+            .nav-pills .nav-link:not(.active):hover,
+            .nav-pills .nav-link:not(.active):focus {
+                background-color: transparent;
+                color: inherit;
+            }
+            .nav-pills .nav-link:not(.active):active {
+                background-color: transparent;
+            }
+            .dropdown-menu .dropdown-item {
+                color: #000;
+            }
+            .dropdown-item:hover,
+            .dropdown-item:focus {
+                color: #000;
+                background-color: transparent;
+            }
+            .dropdown-item:active {
+                background-color: transparent;
             }
             .image-container {
                 position: relative;
                 width: 300px;
                 height: 300px;
+                border: 2px solid #8d6e63; /* Borda para a imagem */
+                border-radius: 10px;
+                overflow: hidden; /* Garante que a borda arredondada seja respeitada */
             }
             .image {
                 opacity: 1;
@@ -51,7 +97,7 @@
                 display: none;
             }
             .upload-btn {
-                background-color: #343a40;
+                background-color: #343a40; /* Cor escura para o botão de upload */
                 color: white;
                 font-size: 16px;
                 padding: 10px 20px;
@@ -59,11 +105,43 @@
                 cursor: pointer;
             }
             .upload-btn:hover {
-                background-color: #037a4c;
+                background-color: #037a4c; /* Cor de hover do tema */
             }
-            body {
-                padding-top: 70px; /* Ajuste conforme a altura da navbar */
-                padding-bottom: 70px;
+            .container {
+                background-color: rgba(255, 255, 255, 0.9);
+                border-radius: 8px;
+                padding: 20px;
+                color: #333;
+            }
+            .form-group label {
+                color: #6d4c41; /* Cor para labels dos formulários */
+                font-weight: bold;
+            }
+            .form-control {
+                background-color: #fdfcfb;
+                border-color: #8d6e63;
+                color: #333;
+            }
+            .btn-primary {
+                background-color: #8d6e63;
+                border-color: #8d6e63;
+                font-weight: 600;
+            }
+            .btn-primary:hover {
+                background-color: #6d4c41;
+                border-color: #5d4037;
+                color: #000;
+            }
+            .btn-secondary {
+                background-color: #8d6e63;
+                border-color: #8d6e63;
+                color: #fff;
+                font-weight: 600;
+            }
+            .btn-secondary:hover {
+                background-color: #6d4c41;
+                border-color: #5d4037;
+                color: #000;
             }
         </style>
     </head>
@@ -75,9 +153,10 @@
             <form th:action="@{/Livro/atualizar/{id}(id=${livro.id})}" th:object="${livro}" method="post" enctype="multipart/form-data">
                 <div class="form-group d-flex justify-content-center mb-3">
                     <div class="image-container">
-                        <img th:src="'data:image/jpeg;base64,' + ${livro.capaEmbase64}"
+                        <img th:src="${livro.capaEmbase64 != null} ? 'data:image/jpeg;base64,' + ${livro.capaEmbase64} : '/images/capa_padrao.jpg'"
                              alt="Capa do Livro"
                              class="image"
+                             id="previewImagem"
                              style="width: 300px; height: 300px; object-fit: cover;">
                         <div class="middle">
                             <label for="arquivoImagem" class="upload-btn">Upload da Capa</label>

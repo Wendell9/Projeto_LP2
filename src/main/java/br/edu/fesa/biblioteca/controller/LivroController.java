@@ -4,9 +4,11 @@ import br.edu.fesa.biblioteca.cadastro.model.Livro;
 import br.edu.fesa.biblioteca.service.LivroService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -30,6 +32,7 @@ public class LivroController {
     private LivroService livroService;
 
     @GetMapping("/cadastro")
+    @PreAuthorize("hasRole('ADMIN')")
     public String mostrarFormularioCadastro(@RequestParam(name = "sucesso", required = false) String sucesso, Model model, HttpServletRequest request) throws UnsupportedEncodingException {
         model.addAttribute("sucesso", sucesso != null);
         model.addAttribute("livro", new Livro());
@@ -37,6 +40,7 @@ public class LivroController {
     }
 
     @PostMapping("/cadastro")
+    @PreAuthorize("hasRole('ADMIN')")
     public String cadastrarLivro(@ModelAttribute Livro livro, Model model,
                                  @RequestParam("arquivoImagem") MultipartFile arquivoImagem,
                                  RedirectAttributes redirectAttributes,
@@ -56,6 +60,7 @@ public class LivroController {
     }
 
     @GetMapping("/listarLivro")
+    @PreAuthorize("hasRole('ADMIN')")
     public String listar(ModelMap model, HttpServletRequest request) throws UnsupportedEncodingException {
 
     List<Livro> livros = livroService.findAll().stream()
@@ -68,6 +73,7 @@ public class LivroController {
     }
 
     @GetMapping("/editar/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public String editar(@PathVariable UUID id, ModelMap model, HttpServletRequest request) throws UnsupportedEncodingException {
 
         Livro livro = livroService.findById(id).orElseThrow(() -> new RuntimeException("Livro não encontrado"));
@@ -78,6 +84,7 @@ public class LivroController {
     }
 
     @PostMapping("/atualizar/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public String atualizar(@PathVariable UUID id, @Valid @ModelAttribute Livro livro, ModelMap model,
                             @RequestParam("arquivoImagem") MultipartFile arquivoImagem,
                             HttpServletRequest request) throws IOException, UnsupportedEncodingException {
@@ -102,16 +109,32 @@ public class LivroController {
     }
 
     @PostMapping("/excluir/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public String excluir(@PathVariable UUID id, HttpServletRequest request, Model model) throws UnsupportedEncodingException {
         livroService.deleteById(id);
         return "redirect:/Livro/listarLivro";
     }
 
     @GetMapping("/remover/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public String confirmarRemocao(@PathVariable UUID id, Model model, HttpServletRequest request) throws UnsupportedEncodingException {
 
         Livro livro = livroService.findById(id).orElseThrow(() -> new RuntimeException("Livro não encontrado"));
         model.addAttribute("livro", livro);
         return "Livro/remover";
+    }
+
+    @GetMapping("/dashboard")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String showDashboard(Model model) {
+        long totalBooks = livroService.getTotalBooks();
+        long availableBooks = livroService.getAvailableBooks();
+        Map<String, Long> booksByCategory = livroService.getBooksByCategory();
+
+        model.addAttribute("totalBooks", totalBooks);
+        model.addAttribute("availableBooks", availableBooks);
+        model.addAttribute("booksByCategory", booksByCategory);
+
+        return "Livro/dashboardLivros";
     }
 }

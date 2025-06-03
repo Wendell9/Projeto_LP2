@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Dashboard de Livros</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <style>
+            body {
+                font-family: 'Permanent Marker', cursive;
+                background-color: #037a4c;
+                color:lightblue;
+                font-weight: 400;
+                padding-top: 70px;
+            }
+            h1, h2, h3, .navbar-brand {
+                font-family: 'Permanent Marker', cursive;
+                font-weight: 200;
+                color: lightblue;
+            }
+            .navbar {
+                background-color: #6d4c41;
+            }
+            .navbar a,
+            .navbar .nav-link,
+            .navbar-brand {
+                color: #fff ;
+            }
+            .navbar .btn-outline-light {
+                border-color: #fff;
+                color: #fff;
+            }
+            .nav-pills .nav-link.active{
+                background-color:#8d6e63;
+                color: #fff;
+                border-color:#8d6e63
+            }
+            .nav-pills .nav-link.active:hover{
+                background-color: #6d4c41;
+                border-color: #5d4037;
+                color:#000
+            }
+            .nav-pills .nav-link:not(.active):hover,
+            .nav-pills .nav-link:not(.active):focus {
+                background-color: transparent;
+                color: inherit;
+            }
+            .nav-pills .nav-link:not(.active):active {
+                background-color: transparent;
+            }
+            .dropdown-menu .dropdown-item {
+                color: #000;
+            }
+            .dropdown-item:hover,
+            .dropdown-item:focus {
+                color: #000;
+                background-color: transparent;
+            }
+            .dropdown-item:active {
+                background-color: transparent;
+            }
+            .container {
+                background-color: rgba(255, 255, 255, 0.9);
+                border-radius: 8px;
+                padding: 20px;
+                color: #333;
+            }
+            .card-dashboard {
+                margin-bottom: 20px;
+                background-color: #fdfcfb; /* Cor de fundo para os cards */
+                border-color: #8d6e63; /* Borda para os cards */
+                color: #333 !important; /* Cor do texto padrão para os cards */
+            }
+            .card-dashboard .card-header {
+                background-color: #8d6e63; /* Cor do cabeçalho dos cards */
+                color: #fff;
+            }
+            .card-dashboard .card-title {
+                color: #6d4c41; /* Cor do título principal dentro do card */
+            }
+            .card-dashboard .card-text {
+                color: #555; /* Cor do texto secundário dentro do card */
+            }
+            /* Sobrescrevendo estilos de cor de texto para os cards específicos */
+            .text-white { /* Mantém a cor de texto branca onde especificado no Bootstrap */
+                color: #fff !important;
+            }
+            .bg-primary {
+                background-color: #8d6e63 !important; /* Cor primária do tema */
+            }
+            .bg-success {
+                background-color: #037a4c !important; /* Cor de sucesso do tema */
+            }
+            .list-group-item {
+                background-color: #fdfcfb;
+                border-color: #8d6e63;
+                color: #333;
+            }
+            .badge.bg-primary {
+                background-color: #6d4c41 !important; /* Cor do badge */
+            }
+            .chart-container {
+                position: relative;
+                height: 400px;
+                width: 100%;
+                background-color: #fdfcfb; /* Fundo do gráfico */
+                border-radius: 8px;
+                padding: 10px;
+            }
+            .btn-secondary {
+                background-color: #8d6e63;
+                border-color: #8d6e63;
+                color: #fff;
+                font-weight: 600;
+            }
+            .btn-secondary:hover {
+                background-color: #6d4c41;
+                border-color: #5d4037;
+                color: #000;
+            }
+        </style>
+    </head>
+    <body>
+        <header th:replace="navbar :: menu"></header>
+
+        <div class="container mt-4">
+            <h1 class="mb-4">Dashboard de Livros</h1>
+
+            <div class="row">
+                <div class="col-md-6 col-lg-4">
+                    <div class="card text-white bg-primary mb-3 card-dashboard">
+                        <div class="card-header">Total de Livros</div>
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${totalBooks}"></h5>
+                            <p class="card-text">Quantidade total de livros cadastrados.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card text-white bg-success mb-3 card-dashboard">
+                        <div class="card-header">Livros Disponíveis</div>
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${availableBooks}"></h5>
+                            <p class="card-text">Quantidade de livros disponíveis para empréstimo.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 col-lg-4">
+                    <div class="card text-dark bg-light mb-3 card-dashboard">
+                        <div class="card-header">Livros por Categoria</div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center"
+                                    th:each="entry : ${booksByCategory}">
+                                    <span th:text="${entry.key}"></span>
+                                    <span class="badge bg-primary rounded-pill" th:text="${entry.value}"></span>
+                                </li>
+                            </ul>
+                            <p th:if="${#maps.isEmpty(booksByCategory)}" class="card-text mt-3">Nenhuma categoria encontrada.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card card-dashboard"> <div class="card-header">Distribuição de Livros por Categoria</div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="booksByCategoryChart"></canvas>
+                            </div>
+                            <p th:if="${#maps.isEmpty(booksByCategory)}" class="text-center mt-3">Nenhum dado de categoria para exibir no gráfico.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <a href="/home" class="btn btn-secondary mt-3">Voltar</a>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            var booksByCategoryData = /*[[${booksByCategory}]]*/ {};
+
+            if (Object.keys(booksByCategoryData).length > 0) {
+                var labels = Object.keys(booksByCategoryData);
+                var data = Object.values(booksByCategoryData);
+
+                var ctx = document.getElementById('booksByCategoryChart').getContext('2d');
+                var booksChart = new Chart(ctx, {
+                    type: 'pie', // You can change to 'bar' or 'doughnut'
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Livros por Categoria',
+                            data: data,
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.7)',
+                                'rgba(54, 162, 235, 0.7)',
+                                'rgba(255, 206, 86, 0.7)',
+                                'rgba(75, 192, 192, 0.7)',
+                                'rgba(153, 102, 255, 0.7)',
+                                'rgba(255, 159, 64, 0.7)',
+                                'rgba(199, 199, 199, 0.7)',
+                                'rgba(83, 102, 255, 0.7)',
+                                'rgba(255, 99, 255, 0.7)',
+                                'rgba(128, 200, 128, 0.7)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)',
+                                'rgba(199, 199, 199, 1)',
+                                'rgba(83, 102, 255, 1)',
+                                'rgba(255, 99, 255, 1)',
+                                'rgba(128, 200, 128, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: '#333' // Cor da legenda para combinar com o tema claro do card
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Distribuição de Livros por Categoria',
+                                color: '#6d4c41' // Cor do título do gráfico
+                            }
+                        }
+                    }
+                });
+            }
+            /*]]>*/
+        </script>
+    </body>
+</html>

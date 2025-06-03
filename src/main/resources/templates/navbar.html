@@ -1,13 +1,8 @@
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
--->
 <html xmlns:th="http://www.thymeleaf.org">
-    <nav th:fragment="menu" class="navbar navbar-dark bg-dark fixed-top px-3">
-        <a class="navbar-brand" href="/home">Biblioteca</a>
+    <nav th:fragment="menu" class="navbar navbar-expand-lg bg-dark fixed-top px-3">
+        <a class="navbar-brand" href="/home">📚 Biblioteca FESA</a>
 
-        <!-- Itens à esquerda -->
         <ul class="nav nav-pills" id="pills-tab" role="tablist">
             <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="/home">Home</a>
@@ -18,33 +13,33 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Livros
                 </a>
-                <ul class="dropdown-menu dropdown-menu-end"> <!-- alinhado à direita -->
-                    <li sec:authorize="hasRole('ADMIN')"> 
+                <ul class="dropdown-menu dropdown-menu-end"> <li sec:authorize="hasRole('ADMIN')">
                         <a class="dropdown-item" href="/Livro/cadastro">Cadastrar Livros</a>
                     </li>
-                    <li sec:authorize="hasRole('ADMIN')"> 
+                    <li sec:authorize="hasRole('ADMIN')">
                         <a class="dropdown-item" href="/Livro/listarLivro">Listar Livros</a>
                     </li>
-                    <li sec:authorize="hasRole('ADMIN')"> 
+                    <li sec:authorize="hasRole('ADMIN')">
                         <a class="dropdown-item" href="/Emprestimo/home">Emprestar</a>
                     </li>
-                    <li sec:authorize="hasRole('ADMIN')"> 
+                    <li sec:authorize="hasRole('ADMIN')">
                         <a class="dropdown-item" href="/Emprestimo/listaDeEmprestimos">Lista de Emprestimos</a>
                     </li>
                 </ul>
             </li>
         </ul>
-        <!-- Dropdown Perfil à direita -->
         <ul class="nav nav-pills ms-auto">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Perfil
                 </a>
-                <ul class="dropdown-menu dropdown-menu-end"> <!-- alinhado à direita -->
-                    <li><a class="dropdown-item" href="/Usuario/Meu_usuario">Meu Usuário</a></li>
+                <ul class="dropdown-menu dropdown-menu-end"> <li><a class="dropdown-item" href="/Usuario/Meu_usuario">Meu Usuário</a></li>
                     <li><a class="dropdown-item" href="/Emprestimo/MeusEmprestimos">Meus Empréstimos</a></li>
                     <li sec:authorize="hasRole('ADMIN')">
                         <a class="dropdown-item" href="/Usuario/lista">Listar Usuários</a>
+                    </li>
+                    <li sec:authorize="hasRole('ADMIN')">
+                        <a class="dropdown-item" href="/Livro/dashboard">Dashboard de Livros</a>
                     </li>
                     <li><a class="dropdown-item" href="/biblioteca-fesa/sair">Sair</a></li>
                 </ul>

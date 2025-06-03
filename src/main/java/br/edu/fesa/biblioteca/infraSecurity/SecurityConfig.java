@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package br.edu.fesa.biblioteca.infraSecurity;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,25 +28,51 @@ public class SecurityConfig {
         http
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                .requestMatchers(HttpMethod.POST, "/Usuario/cadastrar").permitAll()
-                .requestMatchers("/h2-console").permitAll()
-                .requestMatchers("/h2-console/**").permitAll()
-                .requestMatchers("/Usuario/cadastro").permitAll()
-                .requestMatchers("/Livro/cadastro").hasRole("ADMIN")
-                .requestMatchers("/images/**").permitAll()
-                .requestMatchers("/biblioteca-fesa/").permitAll()
-                .requestMatchers("/biblioteca-fesa").permitAll()
-                .requestMatchers("/biblioteca-fesa/login").permitAll()
-                .requestMatchers("/Usuario/lista").hasRole("ADMIN")
-                .requestMatchers("/Livro/listarLivro").permitAll()
-                .requestMatchers("/Livro/editar/").permitAll()
-                .anyRequest().authenticated()
+                        // Publicly accessible paths (no authentication required)
+                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/Usuario/cadastrar").permitAll()
+                        .requestMatchers("/h2-console").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/Usuario/cadastro").permitAll()
+                        .requestMatchers("/images/**").permitAll()
+                        .requestMatchers("/biblioteca-fesa/").permitAll()
+                        .requestMatchers("/biblioteca-fesa").permitAll()
+                        .requestMatchers("/biblioteca-fesa/login").permitAll()
+                        // Paths accessible by ADMIN role only
+                        .requestMatchers("/Livro/cadastro").hasRole("ADMIN")
+                        .requestMatchers("/Usuario/lista").hasRole("ADMIN")
+                        .requestMatchers("/Livro/dashboard").hasRole("ADMIN")
+                        .requestMatchers("/Livro/listarLivro").hasRole("ADMIN") // Make this ADMIN only as well for consistency based on previous changes
+                        .requestMatchers("/Livro/editar/**").hasRole("ADMIN") // Specific path, ensure it's before general rules
+                        .requestMatchers("/Livro/remover/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/Livro/atualizar/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/Livro/excluir/**").hasRole("ADMIN")
+                        .requestMatchers("/Emprestimo/home").hasRole("ADMIN")
+                        .requestMatchers("/Emprestimo/listaDeEmprestimos").hasRole("ADMIN")
+                        .requestMatchers("/Emprestimo/detalhes/**").hasRole("ADMIN")
+                        .requestMatchers("/Emprestimo/AtualizarStatus").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/Emprestimo/realizar").hasRole("ADMIN")
+                        .requestMatchers("/Emprestimo/Devolver/**").hasRole("ADMIN")
+
+
+                        // Paths accessible by any authenticated user (USER or ADMIN)
+                        .requestMatchers("/home").authenticated() // Home page requires authentication
+                        .requestMatchers("/home/detalhes/**").authenticated() // Details page requires authentication
+                        .requestMatchers("/Usuario/Meu_usuario").authenticated()
+                        .requestMatchers("/Usuario/editar/**").authenticated()
+                        .requestMatchers("/Usuario/remover/**").authenticated() // User can remove self
+                        .requestMatchers(HttpMethod.POST, "/Usuario/atualizar/**").authenticated()
+                        .requestMatchers("/Emprestimo/MeusEmprestimos").authenticated()
+                        .requestMatchers("/Emprestimo/MeusDetalhesEmprestimo/**").authenticated()
+
+
+                        // All other requests must be authenticated (catch-all)
+                        .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf.disable())
                 .headers(headers -> headers
-                .frameOptions(frame -> frame.sameOrigin()) // Permite iframes da mesma origem
+                        .frameOptions(frame -> frame.sameOrigin()) // Permite iframes da mesma origem
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
@@ -66,29 +88,3 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 }
-
-
-/*
-@Configuration
-@EnableWebSecurity
-public class SecurityConfig {
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Usando BCryptPasswordEncoder para codificar as senhas
-    }
-
-@Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        return http.getSharedObject(AuthenticationManagerBuilder.class).build();
-    }
- 
-        @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(AbstractHttpConfigurer::disable)
-        .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
-        .formLogin(AbstractHttpConfigurer::disable); // <--- Remove o login padrão do Spring
-        return http.build();
-}}
- */

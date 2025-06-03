@@ -1,13 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package br.edu.fesa.biblioteca.cadastro.model;
 
-/**
- *
- * @author guind
- */
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -51,7 +43,7 @@ public class Livro implements Serializable {
 
     @Column(nullable = false)
     private Integer quantidadeDisponivel;
-    
+
     @Column(columnDefinition = "TEXT") // Permite armazenar textos longos
     private String sinopse;
 
@@ -162,7 +154,10 @@ public class Livro implements Serializable {
     }
 
     public void setCapaEmbase64() {
-        this.CapaEmbase64 = Base64.getEncoder().encodeToString(capa);
+        if (capa != null) { // Adicione esta verificação
+            this.CapaEmbase64 = Base64.getEncoder().encodeToString(capa);
+        } else {
+            this.CapaEmbase64 = null; // Define como null se a capa for nula
+        }
     }
 }
-

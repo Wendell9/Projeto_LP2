@@ -5,36 +5,119 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Remover Livro</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
         <style>
             body {
+                font-family: 'Permanent Marker', cursive;
+                background-color: #037a4c;
+                color:lightblue;
+                font-weight: 400;
                 padding-top: 70px;
             }
-
+            h1, h2, h3, .navbar-brand {
+                font-family: 'Permanent Marker', cursive;
+                font-weight: 200;
+                color: lightblue;
+            }
+            .navbar {
+                background-color: #6d4c41;
+            }
+            .navbar a,
+            .navbar .nav-link,
+            .navbar-brand {
+                color: #fff ;
+            }
+            .navbar .btn-outline-light {
+                border-color: #fff;
+                color: #fff;
+            }
+            .nav-pills .nav-link.active{
+                background-color:#8d6e63;
+                color: #fff;
+                border-color:#8d6e63
+            }
+            .nav-pills .nav-link.active:hover{
+                background-color: #6d4c41;
+                border-color: #5d4037;
+                color:#000
+            }
+            .nav-pills .nav-link:not(.active):hover,
+            .nav-pills .nav-link:not(.active):focus {
+                background-color: transparent;
+                color: inherit;
+            }
+            .nav-pills .nav-link:not(.active):active {
+                background-color: transparent;
+            }
+            .dropdown-menu .dropdown-item {
+                color: #000;
+            }
+            .dropdown-item:hover,
+            .dropdown-item:focus {
+                color: #000;
+                background-color: transparent;
+            }
+            .dropdown-item:active {
+                background-color: transparent;
+            }
             .capa-thumbnail {
                 width: 120px;
                 height: 160px;
                 object-fit: cover;
                 border-radius: 4px;
+                border: 2px solid #8d6e63; /* Borda para a imagem */
             }
-
             .label-col {
                 font-weight: bold;
                 width: 180px;
+                color: #6d4c41;
+            }
+            .container {
+                background-color: rgba(255, 255, 255, 0.9);
+                border-radius: 8px;
+                padding: 20px;
+                color: #333;
+            }
+            .alert-warning {
+                background-color: #ffeeba;
+                border-color: #ffeeba;
+                color: #856404;
+                font-weight: bold;
+            }
+            .btn-danger {
+                background-color: #dc3545;
+                border-color: #dc3545;
+                font-weight: 600;
+            }
+            .btn-danger:hover {
+                background-color: #c82333;
+                border-color: #bd2130;
+            }
+            .btn-secondary {
+                background-color: #8d6e63;
+                border-color: #8d6e63;
+                color: #fff;
+                font-weight: 600;
+            }
+            .btn-secondary:hover {
+                background-color: #6d4c41;
+                border-color: #5d4037;
+                color: #000;
             }
         </style>
     </head>
     <body>
         <header th:replace="navbar :: menu"></header>
 
-        <div class="container">
-            <h2 class="mt-4">Confirmar Remoção do Livro</h2>
+        <div class="container mt-5">
+            <h2 class="mb-4">Confirmar Remoção do Livro</h2>
             <div class="alert alert-warning">
                 Tem certeza de que deseja remover o livro abaixo?
             </div>
 
             <div class="row mb-3">
                 <div class="col-md-3">
-                    <img th:src="'data:image/jpeg;base64,' + ${livro.CapaEmbase64}" alt="Capa do Livro" class="capa-thumbnail" />
+                    <img th:src="${livro.CapaEmbase64 != null} ? 'data:image/jpeg;base64,' + ${livro.CapaEmbase64} : '/images/capa_padrao.jpg'" alt="Capa do Livro" class="capa-thumbnail" />
                 </div>
                 <div class="col-md-9">
                     <div class="row mb-2">
@@ -75,7 +158,7 @@
             <form th:action="@{/Livro/excluir/{id}(id=${livro.id})}" method="post">
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-danger">Remover</button>
-                    <a href="/Livro/lista" class="btn btn-secondary">Cancelar</a>
+                    <a href="/Livro/listarLivro" class="btn btn-secondary">Cancelar</a>
                 </div>
             </form>
         </div>

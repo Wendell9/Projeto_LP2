@@ -7,6 +7,7 @@ package br.edu.fesa.biblioteca.repository;
 import br.edu.fesa.biblioteca.cadastro.model.Livro;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,15 +22,23 @@ public interface LivroRepository extends JpaRepository<Livro, UUID> {
     Optional<Livro> findByTitulo(String titulo);
 
     List<Livro> findByQuantidadeDisponivelGreaterThan(int quantidadeMinima);
-    
+
     @Transactional
     @Modifying
     @Query("UPDATE Livro l SET l.quantidadeDisponivel = l.quantidadeDisponivel - 1 WHERE l.id = :livroId AND l.quantidadeDisponivel > 0")
     int diminuirQuantidadeDisponivel(@Param("livroId") UUID livroId);
-    
+
     @Transactional
     @Modifying
     @Query("UPDATE Livro l SET l.quantidadeDisponivel = l.quantidadeDisponivel + 1 WHERE l.id = :livroId AND l.quantidadeDisponivel > 0")
     int aumentarQuantidadeDisponivel(@Param("livroId") UUID livroId);
 
+    @Query("SELECT l.categoria, SUM(l.quantidadeTotal) FROM Livro l GROUP BY l.categoria")
+    List<Object[]> countBooksByCategory();
+
+    @Query("SELECT SUM(l.quantidadeTotal) FROM Livro l")
+    Long sumTotalBooks();
+
+    @Query("SELECT SUM(l.quantidadeDisponivel) FROM Livro l")
+    Long sumAvailableBooks();
 }

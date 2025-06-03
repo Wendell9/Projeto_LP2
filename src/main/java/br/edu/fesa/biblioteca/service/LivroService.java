@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class LivroService {
@@ -41,5 +43,21 @@ public class LivroService {
 
     public boolean tituloExiste(String titulo) {
         return livroRepository.existsByTitulo(titulo);
+    }
+
+    public long getTotalBooks() {
+        return livroRepository.sumTotalBooks() != null ? livroRepository.sumTotalBooks() : 0;
+    }
+
+    public long getAvailableBooks() {
+        return livroRepository.sumAvailableBooks() != null ? livroRepository.sumAvailableBooks() : 0;
+    }
+
+    public Map<String, Long> getBooksByCategory() {
+        return livroRepository.countBooksByCategory().stream()
+                .collect(Collectors.toMap(
+                        obj -> (String) obj[0],
+                        obj -> ((Number) obj[1]).longValue()
+                ));
     }
 }
