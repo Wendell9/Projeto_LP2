@@ -7,7 +7,6 @@ package br.edu.fesa.biblioteca.repository;
 import br.edu.fesa.biblioteca.cadastro.model.Livro;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;

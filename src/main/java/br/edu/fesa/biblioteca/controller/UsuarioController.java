@@ -1,7 +1,6 @@
 package br.edu.fesa.biblioteca.controller;
 
 import br.edu.fesa.biblioteca.cadastro.model.Usuario;
-import br.edu.fesa.biblioteca.infraSecurity.TokenService;
 import br.edu.fesa.biblioteca.repository.UsuarioRepository;
 import br.edu.fesa.biblioteca.service.UsuarioService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,8 +35,6 @@ public class UsuarioController {
     @Autowired
     private UsuarioRepository usuarioRepository;
     
-    @Autowired
-    private TokenService tokenService;
 
     // Exibe a página de cadastro
     @GetMapping("/cadastro")
@@ -76,6 +73,7 @@ public class UsuarioController {
                 model.addAttribute("usuario", usuario); // Preenche o formulário com os dados
                 return "Usuario/cadastro"; // Volta para a página de cadastro com os dados já preenchidos
             } else {
+                usuario.setStatus(true);
                 usuarioService.save(usuario);
                 model.addAttribute("sucesso", true);
                 model.addAttribute("usuario", usuarioNovo);

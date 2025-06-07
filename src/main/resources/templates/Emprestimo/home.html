@@ -1,56 +1,248 @@
-<div th:fragment="detalhesUsuario" class="container mt-5">
-    <div class="card shadow p-4" style="background-color: rgba(255, 255, 255, 0.9); color: #333;">
-        <h1 class="text-center" style="color: lightblue;">Detalhes do Usuário</h1>
-        <div class="row">
-            <div class="col-md-4 d-flex justify-content-center align-items-start">
-                <div class="image-container" style="border: 2px solid #8d6e63; border-radius: 50%; overflow: hidden;">
-                    <img th:if="${usuario.imagemEmbase64 != null}"
-                         th:src="'data:image/jpeg;base64,' + ${usuario.imagemEmbase64}"
-                         class="rounded-circle image"
-                         style="width: 250px; height: 250px; object-fit: cover;">
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head>
+        <title>Empréstimo</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <style>
+            body {
+                font-family: 'Permanent Marker', cursive;
+                background-color: #037a4c;
+                color:lightblue;
+                font-weight: 400;
+                padding-top: 70px;
+            }
+            h1, h2, h3, .navbar-brand {
+                font-family: 'Permanent Marker', cursive;
+                font-weight: 200;
+                color: lightblue;
+            }
+            .navbar {
+                background-color: #6d4c41;
+            }
+            .navbar a,
+            .navbar .nav-link,
+            .navbar-brand {
+                color: #fff ;
+            }
+            .navbar .btn-outline-light {
+                border-color: #fff;
+                color: #fff;
+            }
+            .nav-pills .nav-link.active{
+                background-color:#8d6e63;
+                color: #fff;
+                border-color:#8d6e63
+            }
+            .nav-pills .nav-link.active:hover{
+                background-color: #6d4c41;
+                border-color: #5d4037;
+                color:#000
+            }
+            .nav-pills .nav-link:not(.active):hover,
+            .nav-pills .nav-link:not(.active):focus {
+                background-color: transparent;
+                color: inherit;
+            }
+            .nav-pills .nav-link:not(.active):active {
+                background-color: transparent;
+            }
+            .dropdown-menu .dropdown-item {
+                color: #000;
+            }
+            .dropdown-item:hover,
+            .dropdown-item:focus {
+                color: #000;
+                background-color: transparent;
+            }
+            .dropdown-item:active {
+                background-color: transparent;
+            }
+            .capa-thumbnail {
+                width: 60px;
+                height: 80px;
+                object-fit: cover;
+                border-radius: 4px;
+                border: 2px solid #8d6e63; /* Borda para a imagem */
+            }
+            .container {
+                background-color: rgba(255, 255, 255, 0.9);
+                border-radius: 8px;
+                padding: 20px;
+                color: #333;
+            }
+            .table {
+                color: #333;
+            }
+            .table thead th {
+                background-color: #8d6e63;
+                color: #fff;
+            }
+            .btn-primary {
+                background-color: #8d6e63;
+                border-color: #8d6e63;
+                font-weight: 600;
+            }
+            .btn-primary:hover {
+                background-color: #6d4c41;
+                border-color: #5d4037;
+                color: #000;
+            }
+            .btn-secondary {
+                background-color: #8d6e63;
+                border-color: #8d6e63;
+                color: #fff;
+                font-weight: 600;
+            }
+            .btn-secondary:hover {
+                background-color: #6d4c41;
+                border-color: #5d4037;
+                color: #000;
+            }
+        </style>
+    </head>
+    <body>
+        <header th:replace="navbar :: menu"></header>
 
-                    <img th:if="${usuario.imagemEmbase64 == null}"
-                         src="/images/foto_padrao.jpg"
-                         class="rounded-circle image"
-                         style="width: 250px; height: 250px; object-fit: cover;">
+        <div class="content">
+            <div class="vertical-group-centered mb-3">
+                <div class="input-group mb-3">
+                    <input type="text" id="email" class="form-control"
+                           placeholder="Digite o email"
+                           aria-label="Recipient's email"
+                           aria-describedby="basic-addon2"
+                           onkeyup="buscarUsuario()">
+                    <button class="btn btn-outline-secondary" onclick="carregarUsuario()" type="button">Buscar</button>
                 </div>
+
+                <select class="form-select" id="sugestoes" size="5" onchange="selecionarEmail(this.value)">
+                    <option value="" disabled selected>Selecione um email</option>
+                </select>
+
+            </div>
+            <div id="detalhesUsuario">
             </div>
 
-            <div class="col-md-8">
-                <div class="form-group">
-                    <label style="color: #6d4c41;">Nome</label>
-                    <input type="text" class="form-control" th:value="${usuario.nome}" readonly style="background-color: #fdfcfb; border-color: #8d6e63; color: #333;">
-                </div>
-
-                <div class="form-group">
-                    <label style="color: #6d4c41;">Email</label>
-                    <input id="email" type="email" class="form-control" th:value="${usuario.email}" readonly style="background-color: #fdfcfb; border-color: #8d6e63; color: #333;">
-                </div>
-
-                <div class="form-group">
-                    <label style="color: #6d4c41;">Telefone</label>
-                    <input type="text" class="form-control" th:value="${usuario.telefone}" readonly style="background-color: #fdfcfb; border-color: #8d6e63; color: #333;">
-                </div>
+            <div id="mensagemErro" class="alert alert-danger mt-3" style="display: none;">
             </div>
+
+            <div id="mensagemSucesso" class="alert alert-success mt-3" style="display: none;">
+            </div>
+
+            <input type="hidden" name="livrosSelecionados" id="livrosSelecionados">
         </div>
-    <div class="container">
-        <h1 class="text-center mt-4" style="color: lightblue;">Lista de Livros para Empréstimo</h1>
-        <input type="text" id="searchBox" class="form-control mb-3" placeholder="Digite o título do livro..." onkeyup="filtrarLivros()" style="background-color: #fdfcfb; border-color: #8d6e63; color: #333;">
-        <ul class="list-group">
-            <li th:each="livro : ${livros}" class="list-group-item" style="background-color: #fdfcfb; border-color: #8d6e63; color: #333;">
-                <label class="d-flex align-items-center stretched-link">
-                    <input class="form-check-input me-2" type="checkbox" th:data-id="${livro.id}" th:data-titulo="${livro.titulo}" style="border-color: #8d6e63;">
-                    <img th:src="'data:image/jpeg;base64,' + ${livro.CapaEmbase64}" alt="Capa" class="capa-thumbnail me-2" style="border: 2px solid #8d6e63;">
-                    <div>
-                        <strong th:text="${livro.titulo}" style="color: #6d4c41;"></strong>
-                        <p class="mb-0 text-muted" th:text="'Autor: ' + ${livro.autor}" style="color: #8d6e63 !important;"></p>
-                        <p class="mb-0 text-muted" th:text="'Editora: ' + ${livro.editora}" style="color: #8d6e63 !important;"></p>
-                        <p class="mb-0 text-muted" th:text="'Ano: ' + ${livro.anoPublicacao}" style="color: #8d6e63 !important;"></p>
-                        <p class="mb-0 text-muted" th:text="'Disponível: ' + ${livro.quantidadeDisponivel}" style="color: #8d6e63 !important;"></p>
-                    </div>
-                </label>
-            </li>
-        </ul>
-    </div>
-    <button type="button" class="btn btn-primary mt-5" onclick="enviarEmprestimo()" style="background-color: #8d6e63; border-color: #8d6e63; font-weight: 600;">Confirmar Empréstimo</button>
-</div>
+
+        <script>
+            function enviarEmprestimo() {
+                let livrosSelecionados = [];
+                const checkboxesMarcados = document.querySelectorAll('.list-group-item input[type="checkbox"]:checked');
+
+                // Extrai os data-id dos checkboxes marcados
+                checkboxesMarcados.forEach(checkbox => {
+                    livrosSelecionados.push(checkbox.getAttribute('data-id'));
+                });
+
+                let data = {
+                    email: document.getElementById("email").value,
+                    livros: livrosSelecionados
+                };
+
+                fetch("/Emprestimo/realizar", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(data)
+                })
+                        .then(response => response.text().then(texto => {
+                                if (response.ok) {
+                                    const sucesso = document.getElementById("mensagemSucesso");
+                                    sucesso.innerText = texto;
+                                    sucesso.style.display = "inline-block";
+                                } else {
+                                    const erro = document.getElementById("mensagemErro");
+                                    erro.innerText = texto;
+                                    erro.style.display = "inline-block";
+                                }
+                            }));
+            }
+
+
+
+
+            function buscarUsuario() {
+                let email = document.getElementById("email").value;
+                let select = document.getElementById("sugestoes");
+
+
+                fetch(`/Emprestimo/buscarUsuario?email=${email}`)
+                        .then(response => {
+                            if (!response.ok)
+                                throw new Error("Erro na requisição");
+                            return response.json();
+                        })
+                        .then(data => {
+                            select.innerHTML = '<option value="" disabled selected>Selecione um email</option>'; // Sempre mantém essa opção
+
+                            if (data.length > 0) {
+                                data.forEach(usuario => {
+                                    let option = document.createElement("option");
+                                    option.value = usuario.email;
+                                    option.innerText = usuario.email;
+                                    select.appendChild(option);
+                                });
+
+                                select.style.display = "block"; // Exibe opções quando há resultados
+                            } else {
+                                select.style.display = "block"; // Mantém visível apenas a opção padrão
+                            }
+                        })
+                        .catch(error => console.error("Erro na busca:", error));
+            }
+            function selecionarEmail(email) {
+                document.getElementById("email").value = email;
+            }
+            function carregarDadosUsuario() {
+                fetch("/emprestimo/carregaDadosUsuario")
+                        .then(response => response.text()) // Retorna HTML
+                        .then(data => {
+                            document.getElementById("conteudoDinamico").innerHTML = data;
+                        })
+                        .catch(error => console.error("Erro ao carregar o fragmento:", error));
+            }
+            function carregarUsuario() {
+                let email = document.getElementById("email").value;
+                fetch(`/Emprestimo/carregaDadosUsuario?email=${email}`)
+                        .then(response => response.text()) // Retorna HTML
+                        .then(data => {
+                            document.getElementById("detalhesUsuario").innerHTML = data;
+                        })
+                        .catch(error => console.error("Erro ao carregar o fragmento:", error));
+            }
+            function filtrarLivros() {
+                let input = document.getElementById("searchBox").value.toLowerCase();
+                let livros = document.querySelectorAll(".list-group-item");
+
+                livros.forEach(livro => {
+                    let titulo = livro.querySelector("strong").innerText.toLowerCase();
+                    if (titulo.includes(input)) {
+                        livro.style.display = "flex"; // Mostra o livro
+                    } else {
+                        livro.style.display = "none"; // Oculta se não corresponder
+                    }
+                });
+            }
+            document.getElementById("emprestimoForm").addEventListener("submit", function (event) {
+                let livrosSelecionados = [];
+
+                document.querySelectorAll(".livro-checkbox:checked").forEach(checkbox => {
+                    livrosSelecionados.push(checkbox.getAttribute("data-id"));
+                });
+
+                // Adiciona IDs ao campo oculto antes de enviar
+                document.getElementById("livrosSelecionados").value = JSON.stringify(livrosSelecionados);
+            });
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

@@ -16,7 +16,6 @@ import br.edu.fesa.biblioteca.repository.UsuarioRepository;
 import java.sql.Date;
 import java.util.List;
 import java.time.LocalDate;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,7 +145,7 @@ public class EmprestimoController {
         return "redirect:/Emprestimo/listaDeEmprestimos";
     }
 
-    @PreAuthorize("hasRole('USER')") 
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping("/MeusEmprestimos")
     public String MeusEmprestimos(HttpServletRequest request, RedirectAttributes redirectAttributes, Model model) throws UnsupportedEncodingException {
         try {

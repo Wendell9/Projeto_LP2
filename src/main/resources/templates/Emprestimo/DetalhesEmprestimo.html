@@ -106,8 +106,8 @@
     <body>
         <header th:replace="navbar :: menu"></header>
 
-        <div class="container mt-5">
-            <h1>Detalhes do Empréstimo</h1>
+        <div class="container">
+            <h1 class="mt-4">Lista de Emprestimos</h1>
 
             <div class="table-responsive">
                 <table class="table table-striped align-middle">
@@ -121,17 +121,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td th:text="${emprestimo.id}"></td>
-                            <td th:text="${emprestimo.email}"></td>
-                            <td th:text="${emprestimo.data_emprestimo}"></td>
-                            <td th:text="${emprestimo.data_prevista_devolucao}"></td>
-                            <td th:text="${emprestimo.status}"></td>
-                        </tr>
-                    </tbody>
-                </table>
 
-                <h2 class="mt-4" style="color: #6d4c41;">Livros no Empréstimo</h2>
+                    <td th:text="${emprestimo.id}"></td>
+
+                    <td th:text="${emprestimo.email}"></td>
+                    <td th:text="${emprestimo.data_emprestimo}"></td>
+                    <td th:text="${emprestimo.data_prevista_devolucao}"></td>
+                    <td th:text="${emprestimo.status}"></td>
+                    </tbody>
+                </table>  
+
                 <table class="table table-striped align-middle">
                     <thead>
                         <tr>
@@ -144,25 +143,24 @@
                             <th>Categoria</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr th:each="livro : ${livros}">
-                            <td>
-                                <img th:src="'data:image/jpeg;base64,' + ${livro.CapaEmbase64}" alt="Capa" class="capa-thumbnail" />
-                            </td>
-                            <td th:text="${livro.titulo}"></td>
-                            <td th:text="${livro.autor}"></td>
-                            <td th:text="${livro.editora}"></td>
-                            <td th:text="${livro.isbn}"></td>
-                            <td th:text="${livro.anoPublicacao}"></td>
-                            <td th:text="${livro.categoria}"></td>
-                        </tr>
-                    </tbody>
+
+                    <tr th:each="livro : ${livros}">
+                        <td>
+                            <img th:src="'data:image/jpeg;base64,' + ${livro.CapaEmbase64}" alt="Capa" class="capa-thumbnail" />
+                        </td>
+                        <td th:text="${livro.titulo}"></td>
+                        <td th:text="${livro.autor}"></td>
+                        <td th:text="${livro.editora}"></td>
+                        <td th:text="${livro.isbn}"></td>
+                        <td th:text="${livro.anoPublicacao}"></td>
+                        <td th:text="${livro.categoria}"></td>
+                    </tr>
                 </table>
                 <div class="mt-4">
                     <a th:href="@{/Emprestimo/Devolver/{id} (id=${emprestimo.id})}" class="btn btn-primary">Devolver</a>
-                    <a href="/Emprestimo/MeusEmprestimos" class="btn btn-secondary">Voltar</a>
+                    <a href="/Empresimo/listaDeEmprestimos" class="btn btn-secondary">Voltar</a>
                 </div>
-
+                
             </div>
         </div>
 
